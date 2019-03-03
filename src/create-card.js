@@ -1,3 +1,9 @@
+const renderControls = () => `<form class="film-card__controls">
+            <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
+            <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
+            <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
+          </form>`;
+
 export default (cardData, noControls) => `<article class="film-card ${noControls ? `film-card--no-controls` : ``}">
           <h3 class="film-card__title">${cardData.title}</h3>
           <p class="film-card__rating">${cardData.rating}</p>
@@ -10,9 +16,5 @@ export default (cardData, noControls) => `<article class="film-card ${noControls
           <p class="film-card__description">${cardData.desc}</p>
           <button class="film-card__comments">${cardData.comments} comments</button>
 
-          ${!noControls ? `<form class="film-card__controls">
-            <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
-            <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
-            <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
-          </form>` : ``}
+          ${noControls ? `` : renderControls()}
         </article>`;

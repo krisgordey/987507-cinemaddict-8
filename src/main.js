@@ -1,9 +1,8 @@
 import createNavItemMarkup from './create-nav-item.js';
 import createCard from './create-card.js';
 import getMovies from './get-movies.js';
+import {RandomRange, INITIAL_CARDS_LENGTH, INITIAL_CARDS_LENGTH_FILTER} from './constants.js';
 
-const INITIAL_CARDS_LENGTH = 7;
-const INITIAL_CARDS_LENGTH_FILTER = 2;
 const NAV_ITEMS_DATA = [
   {name: `All movies`},
   {name: `Watchlist`, count: 5},
@@ -11,10 +10,6 @@ const NAV_ITEMS_DATA = [
   {name: `Favorites`, count: 7},
   {name: `Stats`}
 ];
-const RandomRange = {
-  MIN: 1,
-  MAX: 7
-};
 const makeRandomCount = (max, min) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const navItemsContainer = document.querySelector(`.main-navigation`);
@@ -23,29 +18,25 @@ const mostCommentedCardsContainer = document.querySelector(`.films-list__contain
 const topRatedCardsContainer = document.querySelector(`.films-list__container--top-rated`);
 
 // Создаем разметку пунктов навигации и вставляем их в контейнер
-const navItemDataString = NAV_ITEMS_DATA.map(createNavItemMarkup).join(``);
-navItemsContainer.innerHTML = navItemDataString;
-
+navItemsContainer.innerHTML = NAV_ITEMS_DATA.map(createNavItemMarkup).join(``);
 
 // Создаем разметку карточек и вставляем их в главный контейнер
-const cardsMarkupString = getMovies(INITIAL_CARDS_LENGTH).map((item) => createCard(item)).join(``);
-mainCardsContainer.innerHTML = cardsMarkupString;
-
+const cardsMarkup = getMovies(INITIAL_CARDS_LENGTH).map((item) => createCard(item)).join(``);
+mainCardsContainer.innerHTML = cardsMarkup;
 
 // Создаем разметку карточек и вставляем их в Most commented контейнер
-const mostCommentedCardsMarkupString = getMovies(INITIAL_CARDS_LENGTH_FILTER).map((item) => createCard(item, true)).join(``);
-mostCommentedCardsContainer.innerHTML = mostCommentedCardsMarkupString;
-
+const mostCommentedCardsMarkup = getMovies(INITIAL_CARDS_LENGTH_FILTER).map((item) => createCard(item, true)).join(``);
+mostCommentedCardsContainer.innerHTML = mostCommentedCardsMarkup;
 
 // Создаем разметку карточек и вставляем их в Top rated контейнер
-const topRatedCardsMarkupString = getMovies(INITIAL_CARDS_LENGTH_FILTER).map((item) => createCard(item, true)).join(``);
-topRatedCardsContainer.innerHTML = topRatedCardsMarkupString;
+const topRatedCardsMarkup = getMovies(INITIAL_CARDS_LENGTH_FILTER).map((item) => createCard(item, true)).join(``);
+topRatedCardsContainer.innerHTML = topRatedCardsMarkup;
 
 // По клику на кнопки навигации генерируем случайное количество карточек в главный контейнер и вставляем их в разметку
 navItemsContainer.addEventListener(`click`, function (event) {
   if (event.target.classList.contains(`main-navigation__item`)) {
-    const newcardsMarkupString = getMovies(makeRandomCount(RandomRange.MIN, RandomRange.MAX)).map((item) => createCard(item)).join(``);
-    mainCardsContainer.innerHTML = newcardsMarkupString;
+    const newcardsMarkup = getMovies(makeRandomCount(RandomRange.MIN, RandomRange.MAX)).map((item) => createCard(item)).join(``);
+    mainCardsContainer.innerHTML = newcardsMarkup;
   }
 });
 
