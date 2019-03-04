@@ -4,6 +4,13 @@ export default {
    */
   getRandomBoolean: () => Math.random() >= 0.5,
   /**
+   * Генерирует рандомное число в заданном диапазоне
+   * @param {number} max
+   * @param {number} min
+   * @return {number}
+   */
+  makeRandomCount: (max, min) => Math.floor(Math.random() * (max - min + 1)) + min,
+  /**
    * Возвращает рандомный элемент массива
    * @param {array} myArray
    * @return {*}
