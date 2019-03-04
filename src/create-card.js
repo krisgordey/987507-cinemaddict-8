@@ -1,5 +1,5 @@
 /**
- * Возвращает строку разметки блока контроллов
+ * Создание блока контроллов
  * @return {string}
  */
 const renderControls = () => `<form class="film-card__controls">
@@ -7,14 +7,13 @@ const renderControls = () => `<form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
             <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
           </form>`;
-
 /**
- * Возвращает строку разметки карточки фильма
- * @param {object} cardData объект данных о фильме
+ * Создание карточки фильма
+ * @param {object} cardData данные для карточки
  * @param {boolean} noControls не обязательный параметр, true - если не нужны контроллы
  * @return {string}
  */
-export default (cardData, noControls) => `<article class="film-card ${noControls ? `film-card--no-controls` : ``}">
+export default (cardData, noControls = false) => `<article class="film-card ${noControls ? `film-card--no-controls` : ``}">
           <h3 class="film-card__title">${cardData.title}</h3>
           <p class="film-card__rating">${cardData.rating}</p>
           <p class="film-card__info">
