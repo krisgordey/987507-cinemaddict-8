@@ -19,8 +19,7 @@ export default class FilmDetails {
     this._element = null;
     this._onClose = null;
 
-    this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
-    this._onEscapeBtnPress = this._onEscapeBtnPress.bind(this);
+    this._onCloseCase = this._onCloseCase.bind(this);
   }
   _getUserRatingMarkup(min, max, userRating) {
     let result = ``;
@@ -181,26 +180,25 @@ export default class FilmDetails {
   }
 
   _addListeners() {
-    this._element.querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, this._onCloseButtonClick);
-    document.addEventListener(`keydown`, this._onEscapeBtnPress);
+    document.body.addEventListener(`click`, this._onCloseCase);
+    document.body.addEventListener(`keydown`, this._onCloseCase);
   }
 
   removeListeners() {
-    this._element.querySelector(`.film-details__close-btn`)
-      .removeEventListener(`click`, this._onCloseButtonClick);
-    document.removeEventListener(`keydown`, this._onEscapeBtnPress);
+    document.body.removeEventListener(`click`, this._onCloseCase);
+    document.body.removeEventListener(`keydown`, this._onCloseCase);
   }
 
   set onClose(fn) {
     this._onClose = fn;
   }
 
-  _onCloseButtonClick() {
-    return typeof this._onClose === `function` && this._onClose();
-  }
-  _onEscapeBtnPress(evt) {
-    if (evt.keyCode === Keycodes.ESCAPE) {
+  _onCloseCase(evt) {
+    if (
+      (evt.type === `click` && evt.target.classList.contains(`film-details__close-btn`))
+      || (evt.type === `click` && !this._element.contains(evt.target))
+      || (evt.type === `keydown` && evt.keyCode === Keycodes.ESCAPE)
+    ) {
       return typeof this._onClose === `function` && this._onClose();
     }
     return undefined;
@@ -208,7 +206,7 @@ export default class FilmDetails {
 
   render() {
     this._element = utils.createElement(this.template);
-    this._addListeners();
+    setTimeout(this._addListeners.bind(this), 0);
     return this._element;
   }
 

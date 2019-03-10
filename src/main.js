@@ -29,11 +29,13 @@ const createMovie = (movie, container, controls = true) => {
   filmComponent.onOpen = () => {
     filmDetailsComponent.render();
     mainBody.appendChild(filmDetailsComponent.element);
+    filmComponent.removeListeners();
   };
 
   filmDetailsComponent.onClose = () => {
     mainBody.removeChild(filmDetailsComponent.element);
     filmDetailsComponent.unrender();
+    filmComponent.addListeners();
   };
 };
 

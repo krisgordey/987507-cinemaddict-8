@@ -19,8 +19,7 @@ export default class Film {
     this._element = null;
     this._onOpen = null;
 
-    this._onOpenButtonClick = this._onOpenButtonClick.bind(this);
-    this._onEnterButtonPress = this._onEnterButtonPress(this);
+    this._onOpenCase = this._onOpenCase.bind(this);
   }
 
   _renderControls() {
@@ -52,11 +51,8 @@ export default class Film {
     return this._element;
   }
 
-  _onOpenButtonClick() {
-    return typeof this._onOpen === `function` && this._onOpen();
-  }
-  _onEnterButtonPress(evt) {
-    if (evt.keyCode === Keycodes.ENTER) {
+  _onOpenCase(evt) {
+    if (evt.keyCode === Keycodes.ENTER || evt.type === `click`) {
       return typeof this._onOpen === `function` && this._onOpen();
     }
     return undefined;
@@ -66,20 +62,23 @@ export default class Film {
     this._onOpen = fn;
   }
 
-  _addListeners() {
-    this._element.querySelector(`.film-card__comments`)
-      .addEventListener(`click`, this._onOpenButtonClick);
-    document.addEventListener(`keydown`, this._onEnterButtonPress);
+  addListeners() {
+    const openButton = this._element.querySelector(`.film-card__comments`);
+
+    openButton.addEventListener(`click`, this._onOpenCase);
+    openButton.addEventListener(`keydown`, this._onOpenCase);
   }
 
   removeListeners() {
-    this._element.querySelector(`.film-card__comments`)
-      .removeEventListener(`click`, this._onOpenButtonClick);
+    const openButton = this._element.querySelector(`.film-card__comments`);
+
+    openButton.removeEventListener(`click`, this._onOpenCase);
+    openButton.removeEventListener(`keydown`, this._onOpenCase);
   }
 
   render() {
     this._element = utils.createElement(this.template);
-    this._addListeners();
+    this.addListeners();
     return this._element;
   }
 
