@@ -1,19 +1,19 @@
 import utils from "./utils";
-import {Keycodes} from "./constants";
+import {Keycodes, UserRating} from "./constants";
 
 export default class FilmDetails {
   constructor(data) {
     this._title = data.title;
     this._picture = data.picture;
+    this._userRating = data.userRating;
     this._rating = data.rating;
     this._year = data.year;
     this._genre = data.genre;
-    this._src = data.src;
     this._desc = data.desc;
     this._comments = data.comments;
-    this._isWL = data.isWL;
-    this._isWTCHD = data.comments;
-    this._isFAV = data.isFAV;
+    this._isObservation = data.isObservation;
+    this._isWatch = data.isWatch;
+    this._isFavorite = data.isFavorite;
     this._duration = data.duration;
 
     this._element = null;
@@ -21,6 +21,18 @@ export default class FilmDetails {
 
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onEscapeBtnPress = this._onEscapeBtnPress.bind(this);
+  }
+  _getUserRatingMarkup(min, max, userRating) {
+    let result = ``;
+    for (let i = min; i <= max; i++) {
+      result += `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${userRating === i ? `checked` : ``}>
+      <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>`;
+    }
+    return result;
+  }
+
+  _getGenresMarkup(genres) {
+    return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
   }
 
   get template() {
@@ -77,9 +89,8 @@ export default class FilmDetails {
         <tr class="film-details__row">
         <td class="film-details__term">Genres</td>
         <td class="film-details__cell">
-        <span class="film-details__genre">${this._genre}</span>
-        <span class="film-details__genre">${this._genre}</span>
-        <span class="film-details__genre">${this._genre}</span></td>
+        ${this._getGenresMarkup(this._genre)}
+        </td>
     </tr>
   </table>
   
@@ -90,18 +101,18 @@ export default class FilmDetails {
   </div>
   
   <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._isObservation ? `checked` : ``}>
       <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
   
-  <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" checked>
-  <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-  
-  <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._isWatch ? `checked` : ``}>
+      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+    
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._isFavorite ? `checked` : ``}>
       <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
   </section>
-  
-  <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments}</span></h3>
+      
+      <section class="film-details__comments-wrap">
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments}</span></h3>
   
   <ul class="film-details__comments-list">
       <li class="film-details__comment">
@@ -150,37 +161,12 @@ export default class FilmDetails {
       </div>
   
       <section class="film-details__user-rating-inner">
-      <h3 class="film-details__user-rating-title">Incredibles 2</h3>
+      <h3 class="film-details__user-rating-title">${this._title}</h3>
   
   <p class="film-details__user-rating-feelings">How you feel it?</p>
   
   <div class="film-details__user-rating-score">
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
-      <label class="film-details__user-rating-label" for="rating-1">1</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
-      <label class="film-details__user-rating-label" for="rating-2">2</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
-      <label class="film-details__user-rating-label" for="rating-3">3</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
-      <label class="film-details__user-rating-label" for="rating-4">4</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" checked>
-  <label class="film-details__user-rating-label" for="rating-5">5</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
-      <label class="film-details__user-rating-label" for="rating-6">6</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
-      <label class="film-details__user-rating-label" for="rating-7">7</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
-      <label class="film-details__user-rating-label" for="rating-8">8</label>
-  
-      <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9">
-      <label class="film-details__user-rating-label" for="rating-9">9</label>
+      ${this._getUserRatingMarkup(UserRating.MIN, UserRating.MAX, this._userRating)}
 
     </div>
     </section>

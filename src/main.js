@@ -37,6 +37,7 @@ const createMovie = (movie, container, controls = true) => {
   };
 };
 
+// Создаем разметку карточек и вставляем их в основной контейнер
 getMovies(INITIAL_CARDS_LENGTH).forEach((movie) => {
   createMovie(movie, mainCardsContainer);
 });
@@ -50,15 +51,3 @@ getMovies(INITIAL_CARDS_LENGTH_FILTER).forEach((movie) => {
 getMovies(INITIAL_CARDS_LENGTH_FILTER).forEach((movie) => {
   createMovie(movie, topRatedCardsContainer, false);
 });
-
-
-// Поддержка функциональности навигации не входит в задания первого этапа, и будет реализовываться после пятой недели обучения (информация от лектора).
-// По клику на кнопки навигации генерируем случайное количество карточек и вставляем их в разметку главного контейнера
-// navItemsContainer.addEventListener(`click`, function (event) {
-//   if (event.target.classList.contains(`main-navigation__item`)) {
-//     const newcardsMarkup = getMovies(utils.makeRandomCount(RandomRange.MIN, RandomRange.MAX)).map((item) => createCard(item)).join(``);
-//     mainCardsContainer.innerHTML = newcardsMarkup;
-//   }
-// });
-
-

@@ -8,12 +8,11 @@ export default class Film {
     this._rating = data.rating;
     this._year = data.year;
     this._genre = data.genre;
-    this._src = data.src;
     this._desc = data.desc;
     this._comments = data.comments;
-    this._isWL = data.isWL;
-    this._isWTCHD = data.comments;
-    this._isFAV = data.isFAV;
+    this._isObservation = data.isObservation;
+    this._isWatch = data.isWatch;
+    this._isFavorite = data.isFavorite;
     this._duration = data.duration;
     this._controls = controls;
 

@@ -33,6 +33,10 @@ export default {
     }
     return newArr;
   },
+
+  getRandomShuffledElements(array, limit) {
+    return this.makeShuffledArray(array).slice(0, (Math.floor(Math.random() * limit) + 1));
+  },
   /**
    * Генерирует рандомное число в заданном диапазоне
    * @param {number} min

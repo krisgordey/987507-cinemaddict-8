@@ -1,6 +1,7 @@
 import utils from './utils.js';
 import mockData from './mock-data.js';
 import {DescLimits, Rating, Year, Comments, Duration, MINUTES_IN_HOUR} from './constants.js';
+import {UserRating, GENRES_LIMIT} from "./constants";
 
 /**
  * Перемешивает массив предложений и обрезает этот массив до рандомного количества предложений в заданном диапазоне
@@ -22,6 +23,11 @@ const getDuration = (min, max) => {
   return `${hours}h ${minutes > 9 ? minutes : `0` + minutes}m`;
 };
 
+const getUserRating = () => {
+  const isRated = utils.getRandomBoolean();
+  return isRated ? utils.getRandomInRange(UserRating.MIN, UserRating.MAX) : null;
+};
+
 /**
  * Создает обьект данных о фильме на основании полученных данных
  * @return {object}
@@ -29,14 +35,14 @@ const getDuration = (min, max) => {
 export default () => ({
   title: utils.getRandomArrayElement(mockData.title),
   picture: utils.getRandomArrayElement(mockData.pictures),
+  userRating: getUserRating(),
   rating: utils.getRandomFloatInRange(Rating.MIN, Rating.MAX, Rating.FLOAT),
   year: utils.getRandomInRange(Year.MIN, Year.MAX),
-  genre: utils.getRandomArrayElement(mockData.genres),
-  src: utils.getRandomArrayElement(mockData.pictures),
+  genre: utils.getRandomShuffledElements(mockData.genres, GENRES_LIMIT),
   desc: generateRandomDescription(mockData.sentences),
   comments: utils.getRandomInRange(Comments.MIN, Comments.MAX),
-  isWL: utils.getRandomBoolean(),
-  isWTCHD: utils.getRandomBoolean(),
-  isFAV: utils.getRandomBoolean(),
+  isObservation: utils.getRandomBoolean(),
+  isWatch: utils.getRandomBoolean(),
+  isFavorite: utils.getRandomBoolean(),
   duration: getDuration(Duration.MIN, Duration.MAX),
 });
