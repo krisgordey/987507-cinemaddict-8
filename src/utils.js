@@ -33,6 +33,10 @@ export default {
     }
     return newArr;
   },
+
+  getRandomShuffledElements(array, limit) {
+    return this.makeShuffledArray(array).slice(0, (Math.floor(Math.random() * limit) + 1));
+  },
   /**
    * Генерирует рандомное число в заданном диапазоне
    * @param {number} min
@@ -51,5 +55,11 @@ export default {
   getRandomFloatInRange: (min, max, float) => {
     const random = Number((Math.random() * (max - min + 1)).toFixed(float));
     return random > max ? Math.floor(random) : random;
-  }
+  },
+
+  createElement: (template) => {
+    const newElement = document.createElement(`div`);
+    newElement.innerHTML = template;
+    return newElement.firstChild;
+  },
 };

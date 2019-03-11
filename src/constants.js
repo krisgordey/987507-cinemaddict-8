@@ -4,6 +4,11 @@ export const MINUTES_IN_HOUR = 60;
 export const INITIAL_CARDS_LENGTH = 7;
 export const INITIAL_CARDS_LENGTH_FILTER = 2;
 
+export const GENRES_LIMIT = 3;
+export const Keycodes = {
+  ENTER: 13,
+  ESCAPE: 27,
+};
 /**
  * Диапазон для генерации количества предложений в описании
  * @type {{MIN: number, MAX: number}}
@@ -21,6 +26,15 @@ export const Rating = {
   MIN: 0,
   MAX: 10,
   FLOAT: 1
+};
+
+/**
+ * Диапазон пользовательского рейтинга
+ * @type {{MIN: number, MAX: number}}
+ */
+export const UserRating = {
+  MIN: 1,
+  MAX: 9,
 };
 
 /**
