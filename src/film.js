@@ -58,14 +58,14 @@ export default class Film extends Component {
     this._onOpen = fn;
   }
 
-  addListeners() {
+  _addListeners() {
     const openButton = this._element.querySelector(`.film-card__comments`);
 
     openButton.addEventListener(`click`, this._onOpenCase);
     openButton.addEventListener(`keydown`, this._onOpenCase);
   }
 
-  removeListeners() {
+  _removeListeners() {
     const openButton = this._element.querySelector(`.film-card__comments`);
 
     openButton.removeEventListener(`click`, this._onOpenCase);

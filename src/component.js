@@ -19,12 +19,12 @@ export default class Component {
 
   render() {
     this._element = utils.createElement(this.template);
-    this.addListeners();
+    this._addListeners();
     return this._element;
   }
 
   unrender() {
-    this.removeListeners();
+    this._removeListeners();
     this._element = null;
   }
 }

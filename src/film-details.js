@@ -1,4 +1,3 @@
-import utils from "./utils";
 import {Keycodes, UserRating} from "./constants";
 import Component from "./component";
 
@@ -176,30 +175,30 @@ export default class FilmDetails extends Component {
     </section>`;
   }
 
-  addListeners() {
-    document.body.addEventListener(`click`, this._onCloseCase);
+  _addListeners() {
+    this.closeButton.addEventListener(`click`, this._onCloseCase);
+    this.closeButton.addEventListener(`keydown`, this._onCloseCase);
     document.body.addEventListener(`keydown`, this._onCloseCase);
   }
 
-  removeListeners() {
-    document.body.removeEventListener(`click`, this._onCloseCase);
+  _removeListeners() {
+    this.closeButton.removeEventListener(`click`, this._onCloseCase);
+    this.closeButton.removeEventListener(`keydown`, this._onCloseCase);
     document.body.removeEventListener(`keydown`, this._onCloseCase);
+  }
+
+  get closeButton() {
+    return this._element.querySelector(`.film-details__close-btn`);
   }
 
   set onClose(fn) {
     this._onClose = fn;
   }
 
-  render() {
-    this._element = utils.createElement(this.template);
-    setTimeout(this.addListeners.bind(this), 0);
-    return this._element;
-  }
-
   _onCloseCase(evt) {
     if (
-      (evt.type === `click` && evt.target.classList.contains(`film-details__close-btn`))
-      || (evt.type === `click` && !this._element.contains(evt.target))
+      (evt.type === `click` && evt.target === this.closeButton)
+      || (evt.type === `keydown` && evt.keyCode === Keycodes.ENTER && evt.target === this.closeButton)
       || (evt.type === `keydown` && evt.keyCode === Keycodes.ESCAPE)
     ) {
       return typeof this._onClose === `function` && this._onClose();

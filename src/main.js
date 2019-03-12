@@ -20,6 +20,8 @@ const mainBody = document.querySelector(`body`);
 navItemsContainer.innerHTML = NAV_ITEMS_DATA.map(createNavItemMarkup).join(``);
 
 // Создаем разметку карточек и вставляем их в главный контейнер
+let isOpened = false;
+
 const createMovie = (movie, container, controls = true) => {
   const filmComponent = new Film(movie, controls);
   const filmDetailsComponent = new FilmDetails(movie);
@@ -27,15 +29,17 @@ const createMovie = (movie, container, controls = true) => {
   container.appendChild(filmComponent.render());
 
   filmComponent.onOpen = () => {
-    filmDetailsComponent.render();
-    mainBody.appendChild(filmDetailsComponent.element);
-    filmComponent.removeListeners();
+    if (!isOpened) {
+      filmDetailsComponent.render();
+      mainBody.appendChild(filmDetailsComponent.element);
+      isOpened = true;
+    }
   };
 
   filmDetailsComponent.onClose = () => {
     mainBody.removeChild(filmDetailsComponent.element);
     filmDetailsComponent.unrender();
-    filmComponent.addListeners();
+    isOpened = false;
   };
 };
 
