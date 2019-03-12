@@ -17,14 +17,6 @@ export default class Component {
     return this._element;
   }
 
-  addListeners() {
-    throw new Error(`You have to define addListeners.`);
-  }
-
-  removeListeners() {
-    throw new Error(`You have to define removeListeners.`);
-  }
-
   render() {
     this._element = utils.createElement(this.template);
     this.addListeners();

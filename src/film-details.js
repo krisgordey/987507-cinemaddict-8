@@ -1,3 +1,4 @@
+import utils from "./utils";
 import {Keycodes, UserRating} from "./constants";
 import Component from "./component";
 
@@ -187,6 +188,12 @@ export default class FilmDetails extends Component {
 
   set onClose(fn) {
     this._onClose = fn;
+  }
+
+  render() {
+    this._element = utils.createElement(this.template);
+    setTimeout(this.addListeners.bind(this), 0);
+    return this._element;
   }
 
   _onCloseCase(evt) {
