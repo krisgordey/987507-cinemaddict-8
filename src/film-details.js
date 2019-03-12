@@ -1,8 +1,9 @@
-import utils from "./utils";
 import {Keycodes, UserRating} from "./constants";
+import Component from "./component";
 
-export default class FilmDetails {
+export default class FilmDetails extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._picture = data.picture;
     this._userRating = data.userRating;
@@ -16,7 +17,6 @@ export default class FilmDetails {
     this._isFavorite = data.isFavorite;
     this._duration = data.duration;
 
-    this._element = null;
     this._onClose = null;
 
     this._onCloseCase = this._onCloseCase.bind(this);
@@ -175,11 +175,7 @@ export default class FilmDetails {
     </section>`;
   }
 
-  get element() {
-    return this._element;
-  }
-
-  _addListeners() {
+  addListeners() {
     document.body.addEventListener(`click`, this._onCloseCase);
     document.body.addEventListener(`keydown`, this._onCloseCase);
   }
@@ -202,16 +198,5 @@ export default class FilmDetails {
       return typeof this._onClose === `function` && this._onClose();
     }
     return undefined;
-  }
-
-  render() {
-    this._element = utils.createElement(this.template);
-    setTimeout(this._addListeners.bind(this), 0);
-    return this._element;
-  }
-
-  unrender() {
-    this.removeListeners();
-    this._element = null;
   }
 }
