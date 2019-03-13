@@ -1,8 +1,9 @@
-import utils from "./utils";
 import {Keycodes} from "./constants";
+import Component from "./component";
 
-export default class Film {
+export default class Film extends Component {
   constructor(data, controls = true) {
+    super();
     this._title = data.title;
     this._picture = data.picture;
     this._rating = data.rating;
@@ -16,7 +17,6 @@ export default class Film {
     this._duration = data.duration;
     this._controls = controls;
 
-    this._element = null;
     this._onOpen = null;
 
     this._onOpenCase = this._onOpenCase.bind(this);
@@ -47,10 +47,6 @@ export default class Film {
         </article>`;
   }
 
-  get element() {
-    return this._element;
-  }
-
   _onOpenCase(evt) {
     if (evt.keyCode === Keycodes.ENTER || evt.type === `click`) {
       return typeof this._onOpen === `function` && this._onOpen();
@@ -74,16 +70,5 @@ export default class Film {
 
     openButton.removeEventListener(`click`, this._onOpenCase);
     openButton.removeEventListener(`keydown`, this._onOpenCase);
-  }
-
-  render() {
-    this._element = utils.createElement(this.template);
-    this.addListeners();
-    return this._element;
-  }
-
-  unrender() {
-    this.removeListeners();
-    this._element = null;
   }
 }
