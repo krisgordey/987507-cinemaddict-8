@@ -175,13 +175,13 @@ export default class FilmDetails extends Component {
     </section>`;
   }
 
-  _addListeners() {
+  addListeners() {
     this.closeButton.addEventListener(`click`, this._onCloseCase);
     this.closeButton.addEventListener(`keydown`, this._onCloseCase);
     document.body.addEventListener(`keydown`, this._onCloseCase);
   }
 
-  _removeListeners() {
+  removeListeners() {
     this.closeButton.removeEventListener(`click`, this._onCloseCase);
     this.closeButton.removeEventListener(`keydown`, this._onCloseCase);
     document.body.removeEventListener(`keydown`, this._onCloseCase);

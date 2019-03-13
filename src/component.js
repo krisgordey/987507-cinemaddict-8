@@ -17,14 +17,17 @@ export default class Component {
     return this._element;
   }
 
+  addListeners() {}
+  removeListeners() {}
   render() {
     this._element = utils.createElement(this.template);
-    this._addListeners();
+    this.addListeners();
     return this._element;
   }
 
   unrender() {
-    this._removeListeners();
+    this.removeListeners();
     this._element = null;
   }
+
 }
