@@ -1,8 +1,55 @@
 import utils from './utils.js';
-import mockData from './mock-data.js';
-import {DescLimits, Rating, Year, Comments, Duration, MINUTES_IN_HOUR} from './constants.js';
+import {DescLimits, Rating, Year, Comments, Duration, MINUTES_IN_HOUR, PATH_TO_IMG} from './constants.js';
 import {UserRating, GENRES_LIMIT} from "./constants";
 
+
+const mockData = {
+  title: [
+    `Аквамен`,
+    `Апгрейд`,
+    `Хищник`,
+    `Властелин колец`,
+    `Веном`,
+    `Мстители`,
+    `Интерстеллар`,
+    `Хоббит`,
+    `Звездные войны`,
+    `Начало`,
+    `Щерлок`,
+    `Зеленая миля`,
+    `Великий Гетсби`,
+    `Планета обезьян`,
+    `Тор`,
+  ],
+  pictures: [
+    `${PATH_TO_IMG}accused.jpg`,
+    `${PATH_TO_IMG}blackmail.jpg`,
+    `${PATH_TO_IMG}blue-blazes.jpg`,
+    `${PATH_TO_IMG}fuga-da-new-york.jpg`,
+    `${PATH_TO_IMG}moonrise.jpg`,
+    `${PATH_TO_IMG}three-friends.jpg`,
+  ],
+  sentences: [
+    `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+    `Cras aliquet varius magna, non porta ligula feugiat eget.`,
+    `Fusce tristique felis at fermentum pharetra.`,
+    `Aliquam id orci ut lectus varius viverra.`,
+    `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
+    `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
+    `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
+    `Sed sed nisi sed augue convallis suscipit in sed felis.`,
+    `Aliquam erat volutpat.`,
+    `Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
+  ],
+  genres: [
+    `Comedy`,
+    `Drama`,
+    `Horror`,
+    `Thriller`,
+    `Action`,
+    `Fantasy`
+  ],
+};
 /**
  * Перемешивает массив предложений и обрезает этот массив до рандомного количества предложений в заданном диапазоне
  * @param {array} sentences массив предложений
@@ -41,8 +88,8 @@ export default () => ({
   genre: utils.getRandomShuffledElements(mockData.genres, GENRES_LIMIT),
   desc: generateRandomDescription(mockData.sentences),
   comments: utils.getRandomInRange(Comments.MIN, Comments.MAX),
-  isObservation: utils.getRandomBoolean(),
-  isWatch: utils.getRandomBoolean(),
-  isFavorite: utils.getRandomBoolean(),
+  isObservation: false,
+  isWatch: false,
+  isFavorite: false,
   duration: getDuration(Duration.MIN, Duration.MAX),
 });

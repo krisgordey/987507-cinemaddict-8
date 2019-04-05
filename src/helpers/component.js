@@ -3,6 +3,7 @@ import utils from "./utils";
 export default class Component {
   constructor() {
     this._element = null;
+    this._state = {};
 
     if (new.target === Component) {
       throw new Error(`Can't instantiate Component, only concrete one.`);
@@ -17,9 +18,8 @@ export default class Component {
     return this._element;
   }
 
-  addListeners() {}
-  removeListeners() {}
   render() {
+    this.initState();
     this._element = utils.createElement(this.template);
     this.addListeners();
     return this._element;
@@ -28,7 +28,14 @@ export default class Component {
   unrender() {
     this.removeListeners();
     this._element = null;
+    this._state = {};
   }
 
   update() {}
+
+  initState() {}
+
+  addListeners() {}
+
+  removeListeners() {}
 }

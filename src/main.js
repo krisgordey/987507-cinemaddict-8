@@ -1,59 +1,26 @@
-import createNavItemMarkup from './create-nav-item.js';
-import getMovies from './get-movies.js';
-import {INITIAL_CARDS_LENGTH, INITIAL_CARDS_LENGTH_FILTER} from './constants.js';
-import Film from './film.js';
-import FilmDetails from './film-details.js';
+import Model from './model.js';
+import FilmsView from './View/films-view.js';
+import FiltersView from './View/filters-view.js';
 
-const NAV_ITEMS_DATA = [
-  {name: `All movies`},
-  {name: `Watchlist`, count: 5},
-  {name: `History`, count: 10},
-  {name: `Favorites`, count: 7},
-  {name: `Stats`}
-];
-const navItemsContainer = document.querySelector(`.main-navigation`);
-const mainCardsContainer = document.querySelector(`.films-list__container--main`);
-const mostCommentedCardsContainer = document.querySelector(`.films-list__container--most-commented`);
-const topRatedCardsContainer = document.querySelector(`.films-list__container--top-rated`);
-const mainBody = document.querySelector(`body`);
-// Создаем разметку пунктов навигации и вставляем их в контейнер
-navItemsContainer.innerHTML = NAV_ITEMS_DATA.map(createNavItemMarkup).join(``);
+const model = new Model();
+model.fetchMovies();
+model.fetchTopRatedMovies();
+model.fetchMostCommentedMovies();
 
-// Создаем разметку карточек и вставляем их в главный контейнер
-let isOpened = false;
+const moviesData = model.getMovies();
+const topRatedMoviesData = model.getTopRatedMovies();
+const mostCommentedMoviesData = model.getMostCommentedMovies();
 
-const createMovie = (movie, container, controls = true) => {
-  const filmComponent = new Film(movie, controls);
-  const filmDetailsComponent = new FilmDetails(movie);
+const filmsView = new FilmsView(moviesData, topRatedMoviesData, mostCommentedMoviesData);
 
-  container.appendChild(filmComponent.render());
-
-  filmComponent.onOpen = () => {
-    if (!isOpened) {
-      filmDetailsComponent.render();
-      mainBody.appendChild(filmDetailsComponent.element);
-      isOpened = true;
-    }
-  };
-
-  filmDetailsComponent.onClose = () => {
-    mainBody.removeChild(filmDetailsComponent.element);
-    filmDetailsComponent.unrender();
-    isOpened = false;
-  };
+filmsView.onChangeWatched = (index, status) => {
+  model.updateWatchedStatus(index, status);
+};
+filmsView.onAddToWatchList = (index, status) => {
+  model.updateAddWatchListStatus(index, status);
 };
 
-// Создаем разметку карточек и вставляем их в основной контейнер
-getMovies(INITIAL_CARDS_LENGTH).forEach((movie) => {
-  createMovie(movie, mainCardsContainer);
-});
+const filtersView = new FiltersView(moviesData);
 
-// Создаем разметку карточек и вставляем их в Most commented контейнер
-getMovies(INITIAL_CARDS_LENGTH_FILTER).forEach((movie) => {
-  createMovie(movie, mostCommentedCardsContainer, false);
-});
-
-// Создаем разметку карточек и вставляем их в Top rated контейнер
-getMovies(INITIAL_CARDS_LENGTH_FILTER).forEach((movie) => {
-  createMovie(movie, topRatedCardsContainer, false);
-});
+document.querySelector(`.main`).appendChild(filtersView.render());
+document.querySelector(`.main`).appendChild(filmsView.render());
