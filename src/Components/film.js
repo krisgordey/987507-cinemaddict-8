@@ -1,5 +1,5 @@
-import {Keycodes} from "./constants";
-import Component from "./component";
+import {Keycodes} from "../helpers/constants";
+import Component from "../helpers/component";
 
 export default class Film extends Component {
   constructor(data, controls = true) {
@@ -70,5 +70,11 @@ export default class Film extends Component {
 
     openButton.removeEventListener(`click`, this._onOpenCase);
     openButton.removeEventListener(`keydown`, this._onOpenCase);
+  }
+  update(data) {
+    this._comments = data.comments;
+    this._isObservation = data.isObservation;
+    this._isWatch = data.isWatch;
+    this._isFavorite = data.isFavorite;
   }
 }
