@@ -1,18 +1,19 @@
 import {Keycodes} from "../helpers/constants";
 import Component from "../helpers/component";
+import moment from 'moment';
 
-export default class Film extends Component {
+export default class Movie extends Component {
   constructor(data, controls = true) {
     super();
     this._title = data.title;
     this._picture = data.picture;
-    this._rating = data.rating;
+    this._rating = data.totalRating;
     this._year = data.year;
     this._genre = data.genre;
     this._desc = data.desc;
     this._comments = data.comments;
-    this._isObservation = data.isObservation;
-    this._isWatch = data.isWatch;
+    this._watchlist = data.watchlist;
+    this._watched = data.watched;
     this._isFavorite = data.isFavorite;
     this._duration = data.duration;
     this._controls = controls;
@@ -35,13 +36,13 @@ export default class Film extends Component {
           <h3 class="film-card__title">${this._title}</h3>
           <p class="film-card__rating">${this._rating}</p>
           <p class="film-card__info">
-            <span class="film-card__year">${this._year}</span>
-            <span class="film-card__duration">${this._duration}</span>
-            <span class="film-card__genre">${this._genre}</span>
+            <span class="film-card__year">${moment(this._year).format(`YYYY`)}</span>
+            <span class="film-card__duration">${moment.duration(this._duration, `minutes`).hours()}h ${moment.duration(this._duration, `minutes`).minutes()}m</span>
+            <span class="film-card__genre">${this._genre.join(`, `)}</span>
           </p>
           <img src="${this._picture}" alt="" class="film-card__poster">
           <p class="film-card__description">${this._desc}</p>
-          <button class="film-card__comments">${this._comments} comments</button>
+          <button class="film-card__comments">${this._comments.length} comments</button>
 
           ${this._controls ? this._renderControls() : ``}
         </article>`;
@@ -63,6 +64,7 @@ export default class Film extends Component {
 
     openButton.addEventListener(`click`, this._onOpenCase);
     openButton.addEventListener(`keydown`, this._onOpenCase);
+
   }
 
   removeListeners() {
@@ -73,8 +75,8 @@ export default class Film extends Component {
   }
   update(data) {
     this._comments = data.comments;
-    this._isObservation = data.isObservation;
-    this._isWatch = data.isWatch;
+    this._watchlist = data.watchlist;
+    this._watched = data.watched;
     this._isFavorite = data.isFavorite;
   }
 }

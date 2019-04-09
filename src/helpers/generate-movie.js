@@ -88,8 +88,8 @@ export default () => ({
   genre: utils.getRandomShuffledElements(mockData.genres, GENRES_LIMIT),
   desc: generateRandomDescription(mockData.sentences),
   comments: utils.getRandomInRange(Comments.MIN, Comments.MAX),
-  isObservation: false,
-  isWatch: false,
+  watchlist: false,
+  watched: false,
   isFavorite: false,
   duration: getDuration(Duration.MIN, Duration.MAX),
 });
