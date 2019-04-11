@@ -1,26 +1,24 @@
-import Model from './model.js';
-import FilmsView from './View/films-view.js';
-import FiltersView from './View/filters-view.js';
+import Controller from './controller.js';
 
-const model = new Model();
-model.fetchMovies();
-model.fetchTopRatedMovies();
-model.fetchMostCommentedMovies();
+const app = new Controller();
+app.start();
 
-const moviesData = model.getMovies();
-const topRatedMoviesData = model.getTopRatedMovies();
-const mostCommentedMoviesData = model.getMostCommentedMovies();
+// import API from './helpers/api';
+//
+// new API({
+//   endPoint: `https://es8-demo-srv.appspot.com/moowle/`,
+//   authorization: `Basic eo0w590ik29889addddtt`,
+// }).getFilms().then((films) => console.log(films));
 
-const filmsView = new FilmsView(moviesData, topRatedMoviesData, mostCommentedMoviesData);
-
-filmsView.onChangeWatched = (index, status) => {
-  model.updateWatchedStatus(index, status);
-};
-filmsView.onAddToWatchList = (index, status) => {
-  model.updateAddWatchListStatus(index, status);
-};
-
-const filtersView = new FiltersView(moviesData);
-
-document.querySelector(`.main`).appendChild(filtersView.render());
-document.querySelector(`.main`).appendChild(filmsView.render());
+// const headers = new Headers();
+// headers.append(`Authorization`, `Basic eo0w590ik29889addddtt`);
+// fetch(`https://es8-demo-srv.appspot.com/moowle/movies`, {method: 'GET', headers})
+//   .then((response) => {
+//     if (response.status >= 200 && response.status < 300) {
+//       return response;
+//     } else {
+//       throw new Error(`${response.status}: ${response.statusText}`);
+//     }
+//   })
+//   .then((response) => console.log(response.json()))
+//   .catch(err => console.log(`blet`))

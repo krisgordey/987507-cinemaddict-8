@@ -1,39 +1,61 @@
-import generateMovie from "./helpers/generate-movie";
-import {INITIAL_CARDS_LENGTH, INITIAL_CARDS_LENGTH_FILTER} from './helpers/constants.js';
+
 
 export default class Model {
   constructor() {
-    this._movies = [];
-    this._mostCommentedMovies = [];
-    this._topRatedMovies = [];
+    this._movies = {
+      all: [],
+      watchlist: [],
+      history: [],
+      favorites: [],
+      mostCommented: [],
+      topRated: []
+    };
   }
 
-  fetchMovies() {
-    this._movies = new Array(INITIAL_CARDS_LENGTH).fill(null).map(() => generateMovie());
-  }
-  fetchTopRatedMovies() {
-    this._topRatedMovies = new Array(INITIAL_CARDS_LENGTH_FILTER).fill(null).map(() => generateMovie());
-  }
-  fetchMostCommentedMovies() {
-    this._mostCommentedMovies = new Array(INITIAL_CARDS_LENGTH_FILTER).fill(null).map(() => generateMovie());
+  set movies(movies) {
+    for (const movie of movies) {
+      this._movies.all.push(movie);
+
+      if (movie.watchlist) {
+        this._movies.watchlist.push(movie);
+      }
+      if (movie.watched) {
+        this._movies.history.push(movie);
+      }
+      if (movie.favorites) {
+        this._movies.favorites.push(movie);
+      }
+    }
+
+    this._movies.mostCommented = [...movies].sort((a, b) => b.comments.length - a.comments.length).slice(0, 2);
+    this._movies.topRated = [...movies].sort((a, b) => b.totalRating - a.totalRating).slice(0, 2);
   }
 
-  getMovies() {
+  get movies() {
     return this._movies;
   }
 
-  getTopRatedMovies() {
-    return this._topRatedMovies;
-  }
+  updateMovie(newData) {
+    this._movies.all
+      .find((it) => it.id === newData.id)
+      .update(newData);
 
-  getMostCommentedMovies() {
-    return this._mostCommentedMovies;
-  }
+    this._movies.watchlist = [];
+    this._movies.history = [];
+    this._movies.favorites = [];
+    this._movies.mostCommented = [];
+    this._movies.topRated = [];
 
-  updateWatchedStatus(index, status) {
-    this._movies[index].isWatch = status;
-  }
-  updateAddWatchListStatus(index, status) {
-    this._movies[index].isObservation = status;
+    for (const movie of this._movies.all) {
+      if (movie.watchlist) {
+        this._movies.watchlist.push(movie);
+      }
+      if (movie.watched) {
+        this._movies.history.push(movie);
+      }
+      if (movie.favorites) {
+        this._movies.favorites.push(movie);
+      }
+    }
   }
 }

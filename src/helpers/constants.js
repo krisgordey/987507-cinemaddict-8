@@ -72,3 +72,4 @@ export const RandomRange = {
   MIN: 1,
   MAX: 7
 };
+

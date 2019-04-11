@@ -1,20 +1,21 @@
 import {Keycodes, UserRating} from "../helpers/constants";
 import Component from "../helpers/component";
 import utils from "../helpers/utils";
+import moment from 'moment';
 
-export default class FilmDetails extends Component {
+export default class MovieDetails extends Component {
   constructor(data) {
     super();
     this._title = data.title;
     this._picture = data.picture;
     this._userRating = data.userRating;
-    this._rating = data.rating;
+    this._rating = data.totalRating;
     this._year = data.year;
     this._genre = data.genre;
     this._desc = data.desc;
     this._comments = data.comments;
-    this._isObservation = data.isObservation;
-    this._isWatch = data.isWatch;
+    this._watchlist = data.watchlist;
+    this._watched = data.watched;
     this._isFavorite = data.isFavorite;
     this._duration = data.duration;
 
@@ -102,11 +103,12 @@ export default class FilmDetails extends Component {
     </tr>
     <tr class="film-details__row">
         <td class="film-details__term">Release Date</td>
-        <td class="film-details__cell">15 June ${this._year} (USA)</td>
-    </tr>
-    <tr class="film-details__row">
-        <td class="film-details__term">Runtime</td>
-        <td class="film-details__cell">${this._duration}</td>
+        <td class="film-details__cell">15 June ${moment(this._year).format(`
+  YYYY`)} (USA)</td>
+      </tr>
+      <tr class="film-details__row">
+          <td class="film-details__term">Runtime</td>
+          <td class="film-details__cell">${moment.duration(this._duration, `minutes`).hours()}h ${moment.duration(this._duration, `minutes`).minutes()}m</td>
     </tr>
     <tr class="film-details__row">
         <td class="film-details__term">Country</td>
@@ -127,10 +129,10 @@ export default class FilmDetails extends Component {
   </div>
   
     <section class="film-details__controls">
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._isObservation ? `checked` : ``}>
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._watchlist ? `checked` : ``}>
         <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
     
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._isWatch ? `checked` : ``}>
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._watched ? `checked` : ``}>
         <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
       
         <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._isFavorite ? `checked` : ``}>
@@ -138,7 +140,7 @@ export default class FilmDetails extends Component {
     </section>
       
     <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
     
         <ul class="film-details__comments-list">
             <li class="film-details__comment">
@@ -174,7 +176,7 @@ export default class FilmDetails extends Component {
         </label>
       </div>
     </section>
-      ${this._isWatch ? this._getUserRatingSectionMarcup() : ``}      
+      ${this._watched ? this._getUserRatingSectionMarcup() : ``}      
     </div>
     </section>
     </form>
@@ -219,8 +221,8 @@ export default class FilmDetails extends Component {
   }
 
   _onAddToWatchListCase() {
-    this._isObservation = !this._isObservation;
-    this._onAddToWatchList(this._isObservation);
+    this._watchlist = !this._watchlist;
+    this._onAddToWatchList(this._watchlist);
   }
 
   set onChangeWatched(fn) {
@@ -228,14 +230,14 @@ export default class FilmDetails extends Component {
   }
 
   _onChangeWatchedCase() {
-    this._isWatch = !this._isWatch;
+    this._watched = !this._watched;
     this._processUserRatingBlock();
 
-    this._onChangeWatched(this._isWatch);
+    this._onChangeWatched(this._watched);
   }
 
   _processUserRatingBlock() {
-    if (this._isWatch) {
+    if (this._watched) {
       const userRatingBlock = utils.createElement(this._getUserRatingSectionMarcup());
       this._element.querySelector(`.film-details__comments-wrap`).insertAdjacentElement(`afterend`, userRatingBlock);
     } else {
@@ -243,11 +245,4 @@ export default class FilmDetails extends Component {
     }
   }
 
-  update(data) {
-    this._userRating = data.userRating;
-    this._comments = data.comments;
-    this._isObservation = data.isObservation;
-    this._isWatch = data.isWatch;
-    this._isFavorite = data.isFavorite;
-  }
 }
