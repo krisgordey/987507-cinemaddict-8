@@ -26,6 +26,12 @@ export default class ModelMovie {
     this.comments = data[`comments`];
   }
 
+  update(newData) {
+    for (const key of Object.keys(newData)) {
+      this[key] = newData[key];
+    }
+  }
+
   static toRaw(data) {
     return {
       "id": data.id,

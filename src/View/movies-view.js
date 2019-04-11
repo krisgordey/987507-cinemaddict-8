@@ -81,6 +81,10 @@ export default class MoviesView extends Component {
     this._renderMovies(this._movies.topRated, this._topRatedCardsContainer, false);
   }
 
+  set onMovieUpdate(fn) {
+    this._onMovieUpdate = fn;
+  }
+
   set onChangeWatched(fn) {
     this._onChangeWatched = fn;
   }
@@ -92,38 +96,47 @@ export default class MoviesView extends Component {
     const mainBody = document.querySelector(`body`);
 
     movies.forEach((movie, index) => {
-      const filmComponent = new Movie(movie, controls);
-      const filmDetailsComponent = new MovieDetails(movie);
+      const movieComponent = new Movie(movie, controls);
+      const movieDetailsComponent = new MovieDetails(movie);
 
       let isOpened = false;
 
-      const filmElement = filmComponent.render();
-      container.appendChild(filmElement);
+      const movieElement = movieComponent.render();
+      container.appendChild(movieElement);
 
-      filmComponent.onOpen = () => {
+      movieComponent.onOpen = () => {
         if (!isOpened) {
-          filmDetailsComponent.render();
-          mainBody.appendChild(filmDetailsComponent.element);
+          movieDetailsComponent.render();
+          mainBody.appendChild(movieDetailsComponent.element);
           isOpened = true;
         }
       };
 
-      filmDetailsComponent.onClose = () => {
-        mainBody.removeChild(filmDetailsComponent.element);
-        filmDetailsComponent.unrender();
+      movieDetailsComponent.onClose = () => {
+        mainBody.removeChild(movieDetailsComponent.element);
+        movieDetailsComponent.unrender();
         isOpened = false;
       };
-      filmDetailsComponent.onChangeWatched = (status) => {
+
+      movieComponent.onMovieUpdate = (movieData) => {
+        this._onMovieUpdate(movieData);
+      };
+
+      movieDetailsComponent.onMovieUpdate = (movieData) => {
+        this._onMovieUpdate(movieData);
+      };
+
+      movieDetailsComponent.onChangeWatched = (status) => {
         this._onChangeWatched(index, status);
       };
-      filmDetailsComponent.onAddToWatchList = (status) => {
+      movieDetailsComponent.onAddToWatchList = (status) => {
         this._onAddToWatchList(index, status);
       };
 
       if (isMain) {
         this._renderedMainMovies.push({
-          component: filmComponent,
-          element: filmElement
+          component: movieComponent,
+          element: movieElement
         });
       }
     });

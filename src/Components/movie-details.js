@@ -245,11 +245,4 @@ export default class MovieDetails extends Component {
     }
   }
 
-  update(data) {
-    this._userRating = data.userRating;
-    this._comments = data.comments;
-    this._watchlist = data.watchlist;
-    this._watched = data.watched;
-    this._isFavorite = data.isFavorite;
-  }
 }

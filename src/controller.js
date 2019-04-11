@@ -4,7 +4,7 @@ import FiltersView from './View/filters-view.js';
 import API from "./helpers/api";
 
 const AUTHORIZATION = `Basic dXNlckBwKRISYXNzd29yZAo=9999sss9dds11`;
-const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
+const END_POINT = `https://es8-demo-srv.appspot.com/moowle`;
 
 export default class Controller {
   constructor() {
@@ -35,6 +35,16 @@ export default class Controller {
 
         this._filtersView.onFilter = (name) => {
           this._moviesView.rerenderFilteredMovies(name);
+        };
+
+        this._moviesView.onMovieUpdate = (movieData) => {
+          this._api.updateMovie(movieData)
+            .then((newData) => {
+              this._model.updateMovie(newData);
+
+              this._filtersView.movies = this._model.movies;
+              this._moviesView.movies = this._model.movies;
+            });
         };
       });
 

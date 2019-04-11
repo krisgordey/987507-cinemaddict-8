@@ -57,6 +57,7 @@ export default class FiltersView extends Component {
   }
 
   _onFilterSelect(evt) {
+    evt.preventDefault();
     const navItem = evt.target.classList.contains(`.main-navigation__item`) ? evt.target : evt.target.closest(`.main-navigation__item`);
     if (!navItem || (navItem && evt.target.dataset.name === this._activeFilter)) {
       return;

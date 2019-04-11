@@ -1,10 +1,12 @@
 import {Keycodes} from "../helpers/constants";
 import Component from "../helpers/component";
 import moment from 'moment';
+import _ from "lodash";
 
 export default class Movie extends Component {
   constructor(data, controls = true) {
     super();
+    this._data = data;
     this._title = data.title;
     this._picture = data.picture;
     this._rating = data.totalRating;
@@ -14,21 +16,22 @@ export default class Movie extends Component {
     this._comments = data.comments;
     this._watchlist = data.watchlist;
     this._watched = data.watched;
-    this._isFavorite = data.isFavorite;
+    this._isFavorite = data.favorites;
     this._duration = data.duration;
     this._controls = controls;
 
     this._onOpen = null;
 
     this._onOpenCase = this._onOpenCase.bind(this);
+    this._onToggleWatchlistCase = this._onToggleWatchlistCase.bind(this);
   }
 
   _renderControls() {
     return `<form class="film-card__controls">
-            <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
-            <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
-            <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
-          </form>`;
+            <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._watchlist ? `film-card__controls-item--active` : ``}" ><!--Add to watchlist--> WL</button>
+            <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${this._watched ? `film-card__controls-item--active` : ``}"><!--Mark as watched-->WTCHD</button>
+            <button class="film-card__controls-item button film-card__controls-item--favorite ${this._isFavorite ? `film-card__controls-item--active` : ``}"><!--Mark as favorite-->FAV</button>
+            </form>`;
   }
 
   get template() {
@@ -55,28 +58,47 @@ export default class Movie extends Component {
     return undefined;
   }
 
+  _onToggleWatchlistCase(evt) {
+    if (evt.keyCode === Keycodes.ENTER || evt.type === `click`) {
+      const newData = _.cloneDeep(this._data);
+      newData.watchlist = !newData.watchlist;
+      return typeof this._onMovieUpdate === `function` && this._onMovieUpdate(newData);
+    }
+    return undefined;
+  }
+
   set onOpen(fn) {
     this._onOpen = fn;
   }
 
+  set onMovieUpdate(fn) {
+    this._onMovieUpdate = fn;
+  }
+
   addListeners() {
     const openButton = this._element.querySelector(`.film-card__comments`);
+    const watchListButton = this._element.querySelector(`.film-card__controls-item--add-to-watchlist`);
 
     openButton.addEventListener(`click`, this._onOpenCase);
     openButton.addEventListener(`keydown`, this._onOpenCase);
 
+    if (watchListButton) {
+      watchListButton.addEventListener(`click`, this._onToggleWatchlistCase);
+      watchListButton.addEventListener(`keydown`, this._onToggleWatchlistCase);
+    }
   }
 
   removeListeners() {
     const openButton = this._element.querySelector(`.film-card__comments`);
+    const watchListButton = this._element.querySelector(`.film-card__controls-item--add-to-watchlist`);
 
     openButton.removeEventListener(`click`, this._onOpenCase);
     openButton.removeEventListener(`keydown`, this._onOpenCase);
+
+    if (watchListButton) {
+      watchListButton.removeEventListener(`click`, this._onToggleWatchlistCase);
+      watchListButton.removeEventListener(`keydown`, this._onToggleWatchlistCase);
+    }
   }
-  update(data) {
-    this._comments = data.comments;
-    this._watchlist = data.watchlist;
-    this._watched = data.watched;
-    this._isFavorite = data.isFavorite;
-  }
+
 }
