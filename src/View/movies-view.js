@@ -10,44 +10,22 @@ export default class MoviesView extends Component {
     this._movies = null;
 
     this._currentFilter = `all`;
+    this._countOfMoviesToRender = RENDER_STEP;
+
+    this._isWasFirstRender = false;
+    this._showMoreButton = null;
 
     this._mainCardsContainer = null;
     this._mostCommentedCardsContainer = null;
     this._topRatedCardsContainer = null;
 
-    this._renderedMainMovies = [];
+    this._renderedMovies = {
+      main: [],
+      topRated: [],
+      mostCommented: [],
+    };
 
     this._onShowMore = this._onShowMore.bind(this);
-  }
-
-  get _showMoreButtonTemplate() {
-    return `<button class="films-list__show-more">Show more</button>`;
-  }
-
-  get template() {
-    return `<section class="films">
-      <section class="films-list">
-      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-
-    <div class="films-list__container films-list__container--main">
-    </div>
-
-    </section>
-
-    <section class="films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
-
-    <div class="films-list__container films-list__container--top-rated">
-      </div>
-      </section>
-
-      <section class="films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
-
-    <div class="films-list__container films-list__container--most-commented">
-      </div>
-      </section>
-      </section>`;
   }
 
   render() {
@@ -61,38 +39,63 @@ export default class MoviesView extends Component {
   }
 
   _processRenderingMainMovies() {
-    let mainMoviesToRender;
+    let moviesToRender;
 
-    if (this._movies[this._currentFilter].length <= RENDER_STEP) {
-      mainMoviesToRender = this._movies[this._currentFilter];
+    if (this._movies[this._currentFilter].length <= this._countOfMoviesToRender) {
+      moviesToRender = this._movies[this._currentFilter];
     } else {
-      mainMoviesToRender = this._movies[this._currentFilter].slice(0, RENDER_STEP);
+      moviesToRender = this._movies[this._currentFilter].slice(0, this._countOfMoviesToRender);
       this._mainCardsContainer.insertAdjacentHTML(`afterend`, this._showMoreButtonTemplate);
+      this._showMoreButton = this._element.querySelector(`.films-list__show-more`);
     }
 
-    this._renderMovies(mainMoviesToRender, this._mainCardsContainer, true, true);
+    this._renderMovies(moviesToRender, this._mainCardsContainer, true, `main`);
+  }
+
+  _unrenderPrevious() {
+    for (const renderedMovie of this._renderedMovies.main) {
+      this._mainCardsContainer.removeChild(renderedMovie.element);
+      renderedMovie.component.unrender();
+    }
+    for (const renderedMovie of this._renderedMovies.topRated) {
+      this._topRatedCardsContainer.removeChild(renderedMovie.element);
+      renderedMovie.component.unrender();
+    }
+    for (const renderedMovie of this._renderedMovies.mostCommented) {
+      this._mostCommentedCardsContainer.removeChild(renderedMovie.element);
+      renderedMovie.component.unrender();
+    }
+
+    this._renderedMovies.main = [];
+    this._renderedMovies.topRated = [];
+    this._renderedMovies.mostCommented = [];
+
+    if (this._showMoreButton) {
+      this._showMoreButton.remove();
+    }
+
   }
 
   set movies(movies) {
     this._movies = movies;
 
+    if (this._isWasFirstRender) {
+      this._unrenderPrevious();
+    }
+    if (!this._isWasFirstRender) {
+      this._isWasFirstRender = true;
+    }
+
     this._processRenderingMainMovies();
-    this._renderMovies(this._movies.mostCommented, this._mostCommentedCardsContainer, false);
-    this._renderMovies(this._movies.topRated, this._topRatedCardsContainer, false);
+    this._renderMovies(this._movies.mostCommented, this._mostCommentedCardsContainer, false, `mostCommented`);
+    this._renderMovies(this._movies.topRated, this._topRatedCardsContainer, false, `topRated`);
   }
 
   set onMovieUpdate(fn) {
     this._onMovieUpdate = fn;
   }
 
-  set onChangeWatched(fn) {
-    this._onChangeWatched = fn;
-  }
-  set onAddToWatchList(fn) {
-    this._onAddToWatchList = fn;
-  }
-
-  _renderMovies(movies, container, controls = true, isMain = false) {
+  _renderMovies(movies, container, controls = true, category) {
     const mainBody = document.querySelector(`body`);
 
     movies.forEach((movie, index) => {
@@ -126,19 +129,10 @@ export default class MoviesView extends Component {
         this._onMovieUpdate(movieData);
       };
 
-      movieDetailsComponent.onChangeWatched = (status) => {
-        this._onChangeWatched(index, status);
-      };
-      movieDetailsComponent.onAddToWatchList = (status) => {
-        this._onAddToWatchList(index, status);
-      };
-
-      if (isMain) {
-        this._renderedMainMovies.push({
-          component: movieComponent,
-          element: movieElement
-        });
-      }
+      this._renderedMovies[category].push({
+        component: movieComponent,
+        element: movieElement
+      });
     });
   }
 
@@ -148,17 +142,17 @@ export default class MoviesView extends Component {
     }
 
     this._currentFilter = name;
+    this._countOfMoviesToRender = RENDER_STEP;
 
-    for (const renderedMainMovie of this._renderedMainMovies) {
-      this._mainCardsContainer.removeChild(renderedMainMovie.element);
-      renderedMainMovie.component.unrender();
+    for (const renderedMovie of this._renderedMovies.main) {
+      this._mainCardsContainer.removeChild(renderedMovie.element);
+      renderedMovie.component.unrender();
     }
 
-    this._renderedMainMovies = [];
+    this._renderedMovies.main = [];
 
-    const showMoreButton = this._element.querySelector(`.films-list__show-more`);
-    if (showMoreButton) {
-      showMoreButton.remove();
+    if (this._showMoreButton) {
+      this._showMoreButton.remove();
     }
 
     this._processRenderingMainMovies();
@@ -169,7 +163,7 @@ export default class MoviesView extends Component {
       return;
     }
 
-    const currentRenderedLength = this._renderedMainMovies.length;
+    const currentRenderedLength = this._renderedMovies.main.length;
     const totalCategoryLength = this._movies[this._currentFilter].length;
 
     let moviesToRender;
@@ -182,8 +176,10 @@ export default class MoviesView extends Component {
       this._element.querySelector(`.films-list__show-more`).remove();
     }
 
+    this._countOfMoviesToRender += moviesToRender.length;
 
-    this._renderMovies(moviesToRender, this._mainCardsContainer, true, true);
+
+    this._renderMovies(moviesToRender, this._mainCardsContainer, true, `main`);
   }
 
   addListeners() {
@@ -192,6 +188,36 @@ export default class MoviesView extends Component {
 
   removeListeners() {
     this._element.removeEventListener(`click`, this._onShowMore);
+  }
+
+  get _showMoreButtonTemplate() {
+    return `<button class="films-list__show-more">Show more</button>`;
+  }
+
+  get template() {
+    return `<section class="films">
+      <section class="films-list">
+      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+
+    <div class="films-list__container films-list__container--main">
+    </div>
+
+    </section>
+
+    <section class="films-list--extra">
+      <h2 class="films-list__title">Top rated</h2>
+
+    <div class="films-list__container films-list__container--top-rated">
+      </div>
+      </section>
+
+      <section class="films-list--extra">
+      <h2 class="films-list__title">Most commented</h2>
+
+    <div class="films-list__container films-list__container--most-commented">
+      </div>
+      </section>
+      </section>`;
   }
 }
 

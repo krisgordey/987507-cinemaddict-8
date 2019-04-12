@@ -403,6 +403,18 @@ a:hover {
   overflow-y: auto;
   padding: 0 10px;
 }
+
+.film-details:before {
+  content: '';
+  display: block;
+  background-color: rgba(128, 73, 0, 0);
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  z-index: -1;
+  left: 0
+}
+
 .film-details__inner {
   width: 1070px;
   margin-left: auto;
