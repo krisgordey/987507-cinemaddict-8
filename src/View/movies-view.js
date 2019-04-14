@@ -12,12 +12,14 @@ export default class MoviesView extends Component {
     this._currentFilter = `all`;
     this._countOfMoviesToRender = RENDER_STEP;
 
-    this._isWasFirstRender = false;
+    this._isNotFirstRender = false;
     this._showMoreButton = null;
 
     this._mainCardsContainer = null;
     this._mostCommentedCardsContainer = null;
     this._topRatedCardsContainer = null;
+
+    this._openedDetails = null;
 
     this._renderedMovies = {
       main: [],
@@ -79,11 +81,17 @@ export default class MoviesView extends Component {
   set movies(movies) {
     this._movies = movies;
 
-    if (this._isWasFirstRender) {
+    if (this._isNotFirstRender) {
       this._unrenderPrevious();
     }
-    if (!this._isWasFirstRender) {
-      this._isWasFirstRender = true;
+    if (!this._isNotFirstRender) {
+      this._isNotFirstRender = true;
+    }
+
+    if (this._openedDetails) {
+      const newData = this._movies.all.find((movie) => movie.id === this._openedDetails.id);
+      this._openedDetails.update(newData);
+
     }
 
     this._processRenderingMainMovies();
@@ -102,32 +110,26 @@ export default class MoviesView extends Component {
       const movieComponent = new Movie(movie, controls);
       const movieDetailsComponent = new MovieDetails(movie);
 
-      let isOpened = false;
-
       const movieElement = movieComponent.render();
       container.appendChild(movieElement);
 
       movieComponent.onOpen = () => {
-        if (!isOpened) {
+        if (!this._openedDetails) {
           movieDetailsComponent.render();
           mainBody.appendChild(movieDetailsComponent.element);
-          isOpened = true;
+          this._openedDetails = movieDetailsComponent;
         }
       };
 
       movieDetailsComponent.onClose = () => {
         mainBody.removeChild(movieDetailsComponent.element);
         movieDetailsComponent.unrender();
-        isOpened = false;
+        this._openedDetails = null;
       };
 
-      movieComponent.onMovieUpdate = (movieData) => {
-        this._onMovieUpdate(movieData);
-      };
+      movieComponent.onMovieUpdate = (movieData) => this._onMovieUpdate(movieData);
 
-      movieDetailsComponent.onMovieUpdate = (movieData) => {
-        this._onMovieUpdate(movieData);
-      };
+      movieDetailsComponent.onMovieUpdate = (movieData) => this._onMovieUpdate(movieData);
 
       this._renderedMovies[category].push({
         component: movieComponent,

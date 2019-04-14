@@ -3,7 +3,7 @@ import MoviesView from './View/movies-view.js';
 import FiltersView from './View/filters-view.js';
 import API from "./helpers/api";
 
-const AUTHORIZATION = `Basic dXNlckBwKRISYXNzd29yZAo=9999sss9dds44411`;
+const AUTHORIZATION = `Basic d11XNlckBwKsddQQQYXNzd29yZAo=9999sQWE`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle`;
 
 export default class Controller {
@@ -42,7 +42,7 @@ export default class Controller {
         };
 
         this._moviesView.onMovieUpdate = (movieData) => {
-          this._api.updateMovie(movieData)
+          return this._api.updateMovie(movieData)
             .then((newData) => {
               this._model.updateMovie(newData);
 

@@ -73,3 +73,4 @@ export const RandomRange = {
   MAX: 7
 };
 
+export const USER_NAME = `Grand Pekingese 3000`;
