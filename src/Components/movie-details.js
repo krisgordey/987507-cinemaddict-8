@@ -95,7 +95,7 @@ export default class MovieDetails extends Component {
   }
 
   get _userCommentLastIndex() {
-    const userCommentsIndexes = this._comments.reduce((acc, comment, index) => comment.name === USER_NAME ? [...acc, index] : acc);
+    const userCommentsIndexes = this._comments.reduce((acc, comment, index) => comment.author === USER_NAME ? [...acc, index] : acc, []);
     return userCommentsIndexes.length > 0 ? userCommentsIndexes[userCommentsIndexes.length - 1] : null;
   }
 
@@ -150,13 +150,35 @@ export default class MovieDetails extends Component {
   }
 
   _onAddCommentCase(evt) {
-    if (evt.target === this._commentInput && evt.keyCode === Keycodes.ENTER && evt.ctrlKey) {
+    if (evt.target === this._commentInput && evt.keyCode === Keycodes.ENTER && evt.ctrlKey && evt.target.value.length > 0) {
       evt.target.classList.add(`film-details__comment-input--disabled`);
       evt.target.setAttribute(`disabled`, true);
+
+      const newData = _.cloneDeep(this._data);
+      const newComment = {
+        author: USER_NAME,
+        comment: evt.target.value,
+        date: moment().valueOf(),
+        emotion: this._element.querySelector(`.film-details__add-emoji`).value,
+      };
+      newData.comments.push(newComment);
+
+      this._onMovieUpdate(newData)
+        .then(() => {
+          evt.target.classList.remove(`film-details__comment-input--disabled`);
+          evt.target.removeAttribute(`disabled`, true);
+        })
+        .catch(() => {
+          evt.target.classList.add(`shake`);
+          setTimeout(() => {
+            evt.target.classList.remove(`film-details__comment-input--disabled`);
+            evt.target.classList.remove(`shake`);
+          }, 700);
+        });
     }
   }
 
-  _onDeleteCommentCase(evt) {
+  _onDeleteCommentCase() {
     //
   }
 
