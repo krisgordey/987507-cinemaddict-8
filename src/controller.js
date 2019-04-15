@@ -3,7 +3,7 @@ import MoviesView from './View/movies-view.js';
 import FiltersView from './View/filters-view.js';
 import API from "./helpers/api";
 
-const AUTHORIZATION = `Basic d11XNlckBwKsddQQQYXNzd29yZAo=9999sQWE`;
+const AUTHORIZATION = `Basic d11XNlckBwKsddQQQYXNzd29yZAo=9999sQWE111`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle`;
 
 export default class Controller {

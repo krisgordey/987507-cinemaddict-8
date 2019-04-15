@@ -67,6 +67,10 @@ export default class Movie extends Component {
       const newData = _.cloneDeep(this._data);
       newData[evt.target.dataset.type] = !newData[evt.target.dataset.type];
 
+      if (evt.target.dataset.type === `watched` && newData[`watched`]) {
+        newData.watchingDate = moment().valueOf();
+      }
+
       evt.target.classList.add(`film-card__controls-item--disabled`);
       evt.target.setAttribute(`disabled`, true);
       this._onMovieUpdate(newData)

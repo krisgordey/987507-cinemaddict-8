@@ -22,6 +22,7 @@ export default class MovieDetails extends Component {
     this._onToggleControlCase = this._onToggleControlCase.bind(this);
     this._onAddCommentCase = this._onAddCommentCase.bind(this);
     this._onDeleteCommentCase = this._onDeleteCommentCase.bind(this);
+    this._onSelectEmojiCase = this._onSelectEmojiCase.bind(this);
   }
 
   _setOwnFields(data) {
@@ -59,6 +60,8 @@ export default class MovieDetails extends Component {
 
     this._element.addEventListener(`keydown`, this._onAddCommentCase);
     this._element.addEventListener(`keydown`, this._onDeleteCommentCase);
+
+    this._element.addEventListener(`change`, this._onSelectEmojiCase);
   }
 
   removeListeners() {
@@ -71,6 +74,8 @@ export default class MovieDetails extends Component {
 
     this._element.removeEventListener(`keydown`, this._onAddCommentCase);
     this._element.removeEventListener(`keydown`, this._onDeleteCommentCase);
+
+    this._element.removeEventListener(`change`, this._onSelectEmojiCase);
   }
 
   get _closeButton() {
@@ -115,6 +120,10 @@ export default class MovieDetails extends Component {
       const newData = _.cloneDeep(this._data);
       newData[evt.target.htmlFor] = !newData[evt.target.htmlFor];
 
+      if (evt.target.htmlFor === `watched` && newData[`watched`]) {
+        newData.watchingDate = moment().valueOf();
+      }
+
       this._onMovieUpdate(newData)
         .then(() => {
           evt.target.classList.remove(`film-details__control-label--disabled`);
@@ -149,6 +158,14 @@ export default class MovieDetails extends Component {
 
   _onDeleteCommentCase(evt) {
     //
+  }
+
+  _onSelectEmojiCase(evt) {
+    if (evt.target.classList.contains(`film-details__emoji-item`)) {
+      this._element.querySelector(`.film-details__add-emoji`).value = evt.target.value;
+      this._element.querySelector(`.film-details__add-emoji`).checked = false;
+      this._element.querySelector(`.film-details__add-emoji-label`).innerText = emoji[evt.target.value];
+    }
   }
 
   _getUserRatingInputsMarkup(min, max, userRating) {
@@ -284,7 +301,7 @@ export default class MovieDetails extends Component {
                 <div class="film-details__new-comment">
                   <div>
                     <label for="add-emoji" class="film-details__add-emoji-label">😐</label>
-                    <input type="checkbox" class="film-details__add-emoji visually-hidden" id="add-emoji">
+                    <input type="checkbox" class="film-details__add-emoji visually-hidden" value="neutral-face" id="add-emoji">
               
                     <div class="film-details__emoji-list">
                       <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
