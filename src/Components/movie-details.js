@@ -125,7 +125,7 @@ export default class MovieDetails extends Component {
         return;
       }
 
-      const labelInput = evt.target.parentNode.querySelector(`#${evt.target.htmlFor}`)
+      const labelInput = evt.target.parentNode.querySelector(`#${evt.target.htmlFor}`);
 
       evt.target.classList.add(`film-details__control-label--disabled`);
       labelInput.setAttribute(`disabled`, true);

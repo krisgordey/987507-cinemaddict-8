@@ -112,7 +112,7 @@ export default class MoviesView extends Component {
   _renderMovies(movies, container, controls = true, category) {
     const mainBody = document.querySelector(`body`);
 
-    movies.forEach((movie, index) => {
+    movies.forEach((movie) => {
       const movieComponent = new Movie(movie, controls);
       const movieDetailsComponent = new MovieDetails(movie);
 
