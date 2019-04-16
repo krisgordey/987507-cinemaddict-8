@@ -23,6 +23,7 @@ export default class MovieDetails extends Component {
     this._onAddCommentCase = this._onAddCommentCase.bind(this);
     this._onDeleteCommentCase = this._onDeleteCommentCase.bind(this);
     this._onSelectEmojiCase = this._onSelectEmojiCase.bind(this);
+    this._onSetUserRatingCase = this._onSetUserRatingCase.bind(this);
   }
 
   _setOwnFields(data) {
@@ -59,9 +60,14 @@ export default class MovieDetails extends Component {
     this._element.addEventListener(`keydown`, this._onToggleControlCase);
 
     this._element.addEventListener(`keydown`, this._onAddCommentCase);
+
+    this._element.addEventListener(`click`, this._onDeleteCommentCase);
     this._element.addEventListener(`keydown`, this._onDeleteCommentCase);
 
     this._element.addEventListener(`change`, this._onSelectEmojiCase);
+
+    this._element.addEventListener(`click`, this._onSetUserRatingCase, true);
+    this._element.addEventListener(`keydown`, this._onSetUserRatingCase, true);
   }
 
   removeListeners() {
@@ -73,9 +79,14 @@ export default class MovieDetails extends Component {
     this._element.removeEventListener(`keydown`, this._onToggleControlCase);
 
     this._element.removeEventListener(`keydown`, this._onAddCommentCase);
+
+    this._element.removeEventListener(`click`, this._onDeleteCommentCase);
     this._element.removeEventListener(`keydown`, this._onDeleteCommentCase);
 
     this._element.removeEventListener(`change`, this._onSelectEmojiCase);
+
+    this._element.removeEventListener(`click`, this._onSetUserRatingCase, true);
+    this._element.removeEventListener(`keydown`, this._onSetUserRatingCase, true);
   }
 
   get _closeButton() {
@@ -114,8 +125,10 @@ export default class MovieDetails extends Component {
         return;
       }
 
+      const labelInput = evt.target.parentNode.querySelector(`#${evt.target.htmlFor}`);
+
       evt.target.classList.add(`film-details__control-label--disabled`);
-      evt.target.parentNode.querySelector(`#${evt.target.htmlFor}`).setAttribute(`disabled`, true);
+      labelInput.setAttribute(`disabled`, true);
 
       const newData = _.cloneDeep(this._data);
       newData[evt.target.htmlFor] = !newData[evt.target.htmlFor];
@@ -127,11 +140,13 @@ export default class MovieDetails extends Component {
       this._onMovieUpdate(newData)
         .then(() => {
           evt.target.classList.remove(`film-details__control-label--disabled`);
+          labelInput.removeAttribute(`disabled`);
         })
         .catch(() => {
           evt.target.classList.add(`shake`);
           setTimeout(() => {
-            evt.target.classList.remove(`film-card__controls-item--disabled`);
+            evt.target.classList.remove(`film-details__control-label--disabled`);
+            labelInput.removeAttribute(`disabled`);
             evt.target.classList.remove(`shake`);
           }, 700);
         });
@@ -166,20 +181,54 @@ export default class MovieDetails extends Component {
       this._onMovieUpdate(newData)
         .then(() => {
           evt.target.classList.remove(`film-details__comment-input--disabled`);
-          evt.target.removeAttribute(`disabled`, true);
+          evt.target.removeAttribute(`disabled`);
         })
         .catch(() => {
           evt.target.classList.add(`shake`);
           setTimeout(() => {
             evt.target.classList.remove(`film-details__comment-input--disabled`);
+            evt.target.removeAttribute(`disabled`);
             evt.target.classList.remove(`shake`);
           }, 700);
         });
     }
   }
 
-  _onDeleteCommentCase() {
-    //
+  _onDeleteCommentCase(evt) {
+    if (
+      evt.target.classList.contains(`film-details__watched-reset`)
+      && (evt.keyCode === Keycodes.ENTER || evt.type === `click`)
+    ) {
+      evt.preventDefault();
+
+      if (evt.target.classList.contains(`film-details__watched-reset--disabled`)) {
+        return;
+      }
+
+      evt.target.classList.add(`film-details__watched-reset--disabled`);
+      evt.target.setAttribute(`disabled`, true);
+
+      const newData = _.cloneDeep(this._data);
+      newData.comments.splice(this._userCommentLastIndex, 1);
+
+      if (evt.target.htmlFor === `watched` && newData[`watched`]) {
+        newData.watchingDate = moment().valueOf();
+      }
+
+      this._onMovieUpdate(newData)
+        .then(() => {
+          evt.target.classList.remove(`film-details__watched-reset--disabled`);
+          evt.target.removeAttribute(`disabled`);
+        })
+        .catch(() => {
+          evt.target.classList.add(`shake`);
+          setTimeout(() => {
+            evt.target.classList.remove(`film-details__watched-reset--disabled`);
+            evt.target.removeAttribute(`disabled`);
+            evt.target.classList.remove(`shake`);
+          }, 700);
+        });
+    }
   }
 
   _onSelectEmojiCase(evt) {
@@ -187,6 +236,42 @@ export default class MovieDetails extends Component {
       this._element.querySelector(`.film-details__add-emoji`).value = evt.target.value;
       this._element.querySelector(`.film-details__add-emoji`).checked = false;
       this._element.querySelector(`.film-details__add-emoji-label`).innerText = emoji[evt.target.value];
+    }
+  }
+
+  _onSetUserRatingCase(evt) {
+    if (
+      evt.target.classList.contains(`film-details__user-rating-label`)
+      && (evt.keyCode === Keycodes.ENTER || evt.type === `click`)
+    ) {
+      const labelInput = evt.target.parentNode.querySelector(`#${evt.target.htmlFor}`);
+
+      if (labelInput.checked) {
+        return;
+      }
+      evt.stopPropagation();
+      evt.preventDefault();
+
+      evt.target.classList.add(`film-details__user-rating-label--disabled`);
+      labelInput.setAttribute(`disabled`, true);
+
+      const newData = _.cloneDeep(this._data);
+      newData.userRating = +labelInput.value;
+
+      this._onMovieUpdate(newData)
+        .then(() => {
+          evt.target.classList.remove(`film-details__user-rating-label--disabled`);
+          labelInput.removeAttribute(`disabled`);
+          labelInput.checked = true;
+        })
+        .catch(() => {
+          evt.target.classList.add(`shake`);
+          setTimeout(() => {
+            evt.target.classList.remove(`film-details__user-rating-label--disabled`);
+            labelInput.removeAttribute(`disabled`);
+            evt.target.classList.remove(`shake`);
+          }, 700);
+        });
     }
   }
 
