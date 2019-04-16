@@ -63,8 +63,11 @@ export default class FiltersView extends Component {
     if (!navItem || (navItem && navItem.dataset.name === this._activeFilter)) {
       return;
     }
-    const activeItem = this._element.querySelector(`[data-name="${this._activeFilter}"]`);
-    activeItem.classList.remove(`main-navigation__item--active`);
+
+    if (this._activeFilter) {
+      const activeItem = this._element.querySelector(`[data-name="${this._activeFilter}"]`);
+      activeItem.classList.remove(`main-navigation__item--active`);
+    }
 
     navItem.classList.add(`main-navigation__item--active`);
     this._activeFilter = navItem.dataset.name;
@@ -82,5 +85,13 @@ export default class FiltersView extends Component {
 
   removeListeners() {
     this._element.removeEventListener(`click`, this._onFilterSelect);
+  }
+
+  resetFilter() {
+    const activeFilter = this._element.querySelector(`.main-navigation__item--active`);
+    if (activeFilter) {
+      activeFilter.classList.remove(`main-navigation__item--active`);
+      this._activeFilter = null;
+    }
   }
 }

@@ -40,13 +40,19 @@ export default class MoviesView extends Component {
     return this._element;
   }
 
+  _filterMoviesByTitleString(str) {
+    return this._movies.all.filter((movie) => movie.title.toLowerCase().includes(str.toLowerCase()));
+  }
+
   _processRenderingMainMovies() {
     let moviesToRender;
 
-    if (this._movies[this._currentFilter].length <= this._countOfMoviesToRender) {
-      moviesToRender = this._movies[this._currentFilter];
+    const filteredMovies = this._movies[this._currentFilter] ? this._movies[this._currentFilter] : this._filterMoviesByTitleString(this._currentFilter);
+
+    if (filteredMovies.length <= this._countOfMoviesToRender) {
+      moviesToRender = filteredMovies;
     } else {
-      moviesToRender = this._movies[this._currentFilter].slice(0, this._countOfMoviesToRender);
+      moviesToRender = filteredMovies.slice(0, this._countOfMoviesToRender);
       this._mainCardsContainer.insertAdjacentHTML(`afterend`, this._showMoreButtonTemplate);
       this._showMoreButton = this._element.querySelector(`.films-list__show-more`);
     }
