@@ -18,8 +18,6 @@ export default class Controller {
     this._moviesView = null;
     this._statisticView = null;
     this._footerView = null;
-
-    this._currentFilter = null;
   }
 
   start() {
@@ -89,7 +87,7 @@ export default class Controller {
             });
         };
       })
-      .catch((err) => {
+      .catch(() => {
         this._moviesView.showLoadingError();
       });
 
