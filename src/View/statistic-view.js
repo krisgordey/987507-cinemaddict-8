@@ -140,7 +140,6 @@ export default class StatisticView extends Component {
                </form>
           
               <ul class="statistic__text-list">
-
               </ul>
           
               <div class="statistic__chart-wrap">
