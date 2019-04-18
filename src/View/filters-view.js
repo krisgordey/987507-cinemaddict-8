@@ -21,6 +21,7 @@ export default class FiltersView extends Component {
     this._onFilterSelect = this._onFilterSelect.bind(this);
 
     this._activeFilter = null;
+    this._previousFilter = null;
   }
 
   set movies(movies) {
@@ -87,11 +88,19 @@ export default class FiltersView extends Component {
     this._element.removeEventListener(`click`, this._onFilterSelect);
   }
 
-  resetFilter() {
+  resetFilter(searchString) {
     const activeFilter = this._element.querySelector(`.main-navigation__item--active`);
-    if (activeFilter) {
+    if (activeFilter && searchString !== ``) {
+      this._previousFilter = activeFilter;
       activeFilter.classList.remove(`main-navigation__item--active`);
       this._activeFilter = null;
+    }
+
+    if (searchString === ``) {
+      this._previousFilter.classList.add(`main-navigation__item--active`);
+      this._activeFilter = this._previousFilter.dataset.name;
+
+      this._onFilter(this._activeFilter);
     }
   }
 }

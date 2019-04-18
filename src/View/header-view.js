@@ -43,9 +43,7 @@ export default class HeaderView extends Component {
   }
 
   _onSearchCase(evt) {
-    if (evt.target.value.length > 0) {
-      this._onSearch(evt.target.value);
-    }
+    this._onSearch(evt.target.value);
   }
 
   cleanSearch() {

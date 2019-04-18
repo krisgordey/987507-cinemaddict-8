@@ -2,6 +2,7 @@ import Model from './model.js';
 import HeaderView from './View/header-view.js';
 import FiltersView from './View/filters-view.js';
 import MoviesView from './View/movies-view.js';
+import StatisticView from './View/statistic-view.js';
 import FooterView from './View/footer-view.js';
 import API from "./helpers/api";
 
@@ -18,7 +19,7 @@ export default class Controller {
     this._statisticView = null;
     this._footerView = null;
 
-    this._currentScreen = null;
+    this._currentFilter = null;
   }
 
   start() {
@@ -33,6 +34,10 @@ export default class Controller {
 
     this._moviesView = new MoviesView();
     document.querySelector(`.main`).appendChild(this._moviesView.render());
+    this._moviesView.showLoading();
+
+    this._statisticView = new StatisticView();
+    document.querySelector(`.main`).appendChild(this._statisticView.render());
 
     this._footerView = new FooterView();
     document.querySelector(`.main`).insertAdjacentElement(`afterend`, this._footerView.render());
@@ -44,19 +49,29 @@ export default class Controller {
         this._headerView.movies = this._model.movies;
         this._filtersView.movies = this._model.movies;
         this._moviesView.movies = this._model.movies;
+        this._statisticView.movies = this._model.movies;
         this._footerView.movies = this._model.movies;
 
-        this._headerView.onSearch = (searchString) => {
-          this._filtersView.resetFilter();
+        this._moviesView.hideLoading();
 
-          this._moviesView.rerenderFilteredMovies(searchString);
+        this._headerView.onSearch = (searchString) => {
+          this._filtersView.resetFilter(searchString);
+
+          if (searchString !== ``) {
+            this._moviesView.rerenderFilteredMovies(searchString);
+          }
         };
 
         this._filtersView.onFilter = (name) => {
           if (name === `stats`) {
-            // hide movies, show stats
+            this._moviesView.hideView();
+            this._statisticView.showView();
             return;
+          } else if (this._moviesView.isHidden) {
+            this._moviesView.showView();
+            this._statisticView.hideView();
           }
+
           this._moviesView.rerenderFilteredMovies(name);
 
           this._headerView.cleanSearch();
@@ -70,37 +85,13 @@ export default class Controller {
               this._headerView.movies = this._model.movies;
               this._filtersView.movies = this._model.movies;
               this._moviesView.movies = this._model.movies;
+              this._statisticView.movies = this._model.movies;
             });
         };
+      })
+      .catch((err) => {
+        this._moviesView.showLoadingError();
       });
 
   }
 }
-
-// const model = new Model();
-// model.fetchMovies();
-// model.fetchTopRatedMovies();
-// model.fetchMostCommentedMovies();
-//
-// const moviesData = model.getMovies();
-// const topRatedMoviesData = model.getTopRatedMovies();
-// const mostCommentedMoviesData = model.getMostCommentedMovies();
-//
-// const filmsView = new FilmsView(moviesData, topRatedMoviesData, mostCommentedMoviesData);
-//
-// filmsView.onChangeWatched = (index, status) => {
-//   model.updateWatchedStatus(index, status);
-// };
-// filmsView.onAddToWatchList = (index, status) => {
-//   model.updateAddWatchListStatus(index, status);
-// };
-//
-// const filtersView = new FiltersView(moviesData);
-//
-// this._filtersView.onFilter = (category) => {
-//   this._filtersView.unrenderFilters();
-//   this._filtersView.renderFilters(category);
-// };
-//
-// document.querySelector(`.main`).appendChild(filtersView.render());
-// document.querySelector(`.main`).appendChild(filmsView.render());
