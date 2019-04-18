@@ -26,7 +26,7 @@ export default class FiltersView extends Component {
   set movies(movies) {
     this._movies = movies;
 
-    this._activeFilter = `all`;
+    this._activeFilter = this._activeFilter ? this._activeFilter : `all`;
 
     this._element.innerHTML = this._createFiltersMarkup();
   }
@@ -58,17 +58,21 @@ export default class FiltersView extends Component {
 
   _onFilterSelect(evt) {
     evt.preventDefault();
+
     const navItem = evt.target.classList.contains(`.main-navigation__item`) ? evt.target : evt.target.closest(`.main-navigation__item`);
-    if (!navItem || (navItem && evt.target.dataset.name === this._activeFilter)) {
+    if (!navItem || (navItem && navItem.dataset.name === this._activeFilter)) {
       return;
     }
-    const activeItem = this._element.querySelector(`[data-name="${this._activeFilter}"]`);
-    activeItem.classList.remove(`main-navigation__item--active`);
+
+    if (this._activeFilter) {
+      const activeItem = this._element.querySelector(`[data-name="${this._activeFilter}"]`);
+      activeItem.classList.remove(`main-navigation__item--active`);
+    }
 
     navItem.classList.add(`main-navigation__item--active`);
     this._activeFilter = navItem.dataset.name;
 
-    this._onFilter(evt.target.dataset.name);
+    this._onFilter(this._activeFilter);
   }
 
   set onFilter(fn) {
@@ -81,5 +85,13 @@ export default class FiltersView extends Component {
 
   removeListeners() {
     this._element.removeEventListener(`click`, this._onFilterSelect);
+  }
+
+  resetFilter() {
+    const activeFilter = this._element.querySelector(`.main-navigation__item--active`);
+    if (activeFilter) {
+      activeFilter.classList.remove(`main-navigation__item--active`);
+      this._activeFilter = null;
+    }
   }
 }

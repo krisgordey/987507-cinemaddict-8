@@ -12,7 +12,7 @@ export default class ModelMovie {
     this.writers = data[`film_info`][`writers`];
     this.actors = data[`film_info`][`actors`];
     this.year = data[`film_info`][`release`][`date`];
-    this.country = data[`film_info`][`release`][`country`];
+    this.country = data[`film_info`][`release`][`release_country`];
     this.duration = data[`film_info`][`runtime`];
     this.genre = data[`film_info`][`genre`];
     this.desc = data[`film_info`][`description`];
@@ -45,10 +45,10 @@ export default class ModelMovie {
         "writers": data.writers,
         "actors": data.actors,
         "release": {
-          "date": data.duration,
+          "date": data.year,
           "release_country": data.country
         },
-        "runtime": data.year,
+        "runtime": data.duration,
         "genre": data.genre,
         "description": data.desc
       },
@@ -57,7 +57,7 @@ export default class ModelMovie {
         "watchlist": data.watchlist,
         "already_watched": data.watched,
         "watching_date": data.watchingDate,
-        "favorite": data.isFavorite
+        "favorite": data.favorites
       },
       "comments": data.comments,
     };
