@@ -27,6 +27,8 @@ export default class MoviesView extends Component {
       mostCommented: [],
     };
 
+    this.isHidden = false;
+
     this._onShowMore = this._onShowMore.bind(this);
   }
 
@@ -36,6 +38,8 @@ export default class MoviesView extends Component {
     this._mainCardsContainer = this._element.querySelector(`.films-list__container--main`);
     this._mostCommentedCardsContainer = this._element.querySelector(`.films-list__container--most-commented`);
     this._topRatedCardsContainer = this._element.querySelector(`.films-list__container--top-rated`);
+
+    this._mainCardsContainerTitle = this._element.querySelector(`.films-list__title`);
 
     return this._element;
   }
@@ -198,6 +202,30 @@ export default class MoviesView extends Component {
     this._element.removeEventListener(`click`, this._onShowMore);
   }
 
+  showLoading() {
+    this._mainCardsContainerTitle.classList.remove(`visually-hidden`);
+    this._mainCardsContainerTitle.innerText = `Loading moovies…`;
+  }
+
+  showLoadingError() {
+    this._mainCardsContainerTitle.innerText = `Something went wrong while loading movies. Check your connection or try again later`;
+  }
+
+  hideLoading() {
+    this._mainCardsContainerTitle.classList.add(`visually-hidden`);
+    this._mainCardsContainerTitle.innerText = ``;
+  }
+
+  hideView() {
+    this.isHidden = true;
+    this._element.classList.add(`visually-hidden`);
+  }
+
+  showView() {
+    this.isHidden = false;
+    this._element.classList.remove(`visually-hidden`);
+  }
+
   get _showMoreButtonTemplate() {
     return `<button class="films-list__show-more">Show more</button>`;
   }
@@ -205,7 +233,7 @@ export default class MoviesView extends Component {
   get template() {
     return `<section class="films">
       <section class="films-list">
-      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+      <h2 class="films-list__title visually-hidden"></h2>
 
     <div class="films-list__container films-list__container--main">
     </div>
