@@ -26,6 +26,37 @@ export default class MovieDetails extends Component {
     this._onSetUserRatingCase = this._onSetUserRatingCase.bind(this);
   }
 
+  get _closeButton() {
+    return this._element.querySelector(`.film-details__close-btn`);
+  }
+
+  get template() {
+    return `<section class="film-details">
+              ${this._generateCardMarkup()}
+            </section>`;
+  }
+
+  get _commentInput() {
+    return this._element.querySelector(`.film-details__comment-input`);
+  }
+
+  get _userCommentLastIndex() {
+    const userCommentsIndexes = this._comments.reduce((acc, comment, index) => comment.author === USER_NAME ? [...acc, index] : acc, []);
+    return userCommentsIndexes.length > 0 ? userCommentsIndexes[userCommentsIndexes.length - 1] : null;
+  }
+
+  get _hasUserComment() {
+    return !!this._userCommentLastIndex;
+  }
+
+  set onClose(fn) {
+    this._onClose = fn;
+  }
+
+  set onMovieUpdate(fn) {
+    this._onMovieUpdate = fn;
+  }
+
   _setOwnFields(data) {
     this._data = data;
     this._title = data.title;
@@ -48,70 +79,7 @@ export default class MovieDetails extends Component {
   update(newData) {
     this._setOwnFields(newData);
 
-    this.element.innerHTML = this._generateCardMakup();
-  }
-
-  addListeners() {
-    this._element.addEventListener(`click`, this._onCloseCase);
-    this._element.addEventListener(`keydown`, this._onCloseCase);
-    document.body.addEventListener(`keydown`, this._onCloseCase);
-
-    this._element.addEventListener(`click`, this._onToggleControlCase);
-    this._element.addEventListener(`keydown`, this._onToggleControlCase);
-
-    this._element.addEventListener(`keydown`, this._onAddCommentCase);
-
-    this._element.addEventListener(`click`, this._onDeleteCommentCase);
-    this._element.addEventListener(`keydown`, this._onDeleteCommentCase);
-
-    this._element.addEventListener(`change`, this._onSelectEmojiCase);
-
-    this._element.addEventListener(`click`, this._onSetUserRatingCase, true);
-    this._element.addEventListener(`keydown`, this._onSetUserRatingCase, true);
-  }
-
-  removeListeners() {
-    this._element.removeEventListener(`click`, this._onCloseCase);
-    this._element.removeEventListener(`keydown`, this._onCloseCase);
-    document.body.removeEventListener(`keydown`, this._onCloseCase);
-
-    this._element.removeEventListener(`click`, this._onToggleControlCase);
-    this._element.removeEventListener(`keydown`, this._onToggleControlCase);
-
-    this._element.removeEventListener(`keydown`, this._onAddCommentCase);
-
-    this._element.removeEventListener(`click`, this._onDeleteCommentCase);
-    this._element.removeEventListener(`keydown`, this._onDeleteCommentCase);
-
-    this._element.removeEventListener(`change`, this._onSelectEmojiCase);
-
-    this._element.removeEventListener(`click`, this._onSetUserRatingCase, true);
-    this._element.removeEventListener(`keydown`, this._onSetUserRatingCase, true);
-  }
-
-  get _closeButton() {
-    return this._element.querySelector(`.film-details__close-btn`);
-  }
-
-  get _commentInput() {
-    return this._element.querySelector(`.film-details__comment-input`);
-  }
-
-  set onClose(fn) {
-    this._onClose = fn;
-  }
-
-  set onMovieUpdate(fn) {
-    this._onMovieUpdate = fn;
-  }
-
-  get _userCommentLastIndex() {
-    const userCommentsIndexes = this._comments.reduce((acc, comment, index) => comment.author === USER_NAME ? [...acc, index] : acc, []);
-    return userCommentsIndexes.length > 0 ? userCommentsIndexes[userCommentsIndexes.length - 1] : null;
-  }
-
-  get _hasUserComment() {
-    return !!this._userCommentLastIndex;
+    this.element.innerHTML = this._generateCardMarkup();
   }
 
   _onToggleControlCase(evt) {
@@ -326,13 +294,7 @@ export default class MovieDetails extends Component {
             </section>`;
   }
 
-  get template() {
-    return `<section class="film-details">
-              ${this._generateCardMakup()}
-            </section>`;
-  }
-
-  _generateCardMakup() {
+  _generateCardMarkup() {
     return `<form class="film-details__inner" action="" method="get">
               <div class="film-details__close">
                 <button class="film-details__close-btn" type="button">close</button>
@@ -428,5 +390,43 @@ export default class MovieDetails extends Component {
               </section>
               ${(this._userRating || this._hasUserComment) ? this._getUserRatingSectionMarkup() : ``}
             </form>`;
+  }
+
+  addListeners() {
+    this._element.addEventListener(`click`, this._onCloseCase);
+    this._element.addEventListener(`keydown`, this._onCloseCase);
+    document.body.addEventListener(`keydown`, this._onCloseCase);
+
+    this._element.addEventListener(`click`, this._onToggleControlCase);
+    this._element.addEventListener(`keydown`, this._onToggleControlCase);
+
+    this._element.addEventListener(`keydown`, this._onAddCommentCase);
+
+    this._element.addEventListener(`click`, this._onDeleteCommentCase);
+    this._element.addEventListener(`keydown`, this._onDeleteCommentCase);
+
+    this._element.addEventListener(`change`, this._onSelectEmojiCase);
+
+    this._element.addEventListener(`click`, this._onSetUserRatingCase, true);
+    this._element.addEventListener(`keydown`, this._onSetUserRatingCase, true);
+  }
+
+  removeListeners() {
+    this._element.removeEventListener(`click`, this._onCloseCase);
+    this._element.removeEventListener(`keydown`, this._onCloseCase);
+    document.body.removeEventListener(`keydown`, this._onCloseCase);
+
+    this._element.removeEventListener(`click`, this._onToggleControlCase);
+    this._element.removeEventListener(`keydown`, this._onToggleControlCase);
+
+    this._element.removeEventListener(`keydown`, this._onAddCommentCase);
+
+    this._element.removeEventListener(`click`, this._onDeleteCommentCase);
+    this._element.removeEventListener(`keydown`, this._onDeleteCommentCase);
+
+    this._element.removeEventListener(`change`, this._onSelectEmojiCase);
+
+    this._element.removeEventListener(`click`, this._onSetUserRatingCase, true);
+    this._element.removeEventListener(`keydown`, this._onSetUserRatingCase, true);
   }
 }

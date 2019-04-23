@@ -24,6 +24,10 @@ export default class FiltersView extends Component {
     this._previousFilter = null;
   }
 
+  get template() {
+    return `<nav class="main-navigation">${this._createFiltersMarkup()}</nav>`;
+  }
+
   set movies(movies) {
     this._movies = movies;
 
@@ -32,16 +36,12 @@ export default class FiltersView extends Component {
     this._element.innerHTML = this._createFiltersMarkup();
   }
 
-  get template() {
-    return `<nav class="main-navigation">${this._createFiltersMarkup()}</nav>`;
+  set onFilter(fn) {
+    this._onFilter = fn;
   }
 
   _createFiltersMarkup() {
     return NAV_ITEMS_DATA.map(this._createNavItem.bind(this)).join(``);
-  }
-
-  _isStats(name) {
-    return name === `Stats` ? `main-navigation__item--additional` : ``;
   }
 
   _countCategory(cat) {
@@ -51,7 +51,7 @@ export default class FiltersView extends Component {
   _createNavItem(item) {
     const count = item.count ? this._countCategory(item.catName) : null;
     return `<a href="#${item.name}" data-name="${item.catName}"
-      class="main-navigation__item ${item.catName === this._activeFilter ? `main-navigation__item--active` : ``} ${this._isStats(item.name)}">
+      class="main-navigation__item ${item.catName === this._activeFilter ? `main-navigation__item--active` : ``} ${FiltersView._isStats(item.name)}">
       ${item.name}
       ${count ? `<span class="main-navigation__item-count">${count}</span>` : ``}
       </a>`;
@@ -76,18 +76,6 @@ export default class FiltersView extends Component {
     this._onFilter(this._activeFilter);
   }
 
-  set onFilter(fn) {
-    this._onFilter = fn;
-  }
-
-  addListeners() {
-    this._element.addEventListener(`click`, this._onFilterSelect);
-  }
-
-  removeListeners() {
-    this._element.removeEventListener(`click`, this._onFilterSelect);
-  }
-
   resetFilter(searchString) {
     const activeFilter = this._element.querySelector(`.main-navigation__item--active`);
     if (activeFilter && searchString !== ``) {
@@ -102,5 +90,17 @@ export default class FiltersView extends Component {
 
       this._onFilter(this._activeFilter);
     }
+  }
+
+  addListeners() {
+    this._element.addEventListener(`click`, this._onFilterSelect);
+  }
+
+  removeListeners() {
+    this._element.removeEventListener(`click`, this._onFilterSelect);
+  }
+
+  static _isStats(name) {
+    return name === `Stats` ? `main-navigation__item--additional` : ``;
   }
 }

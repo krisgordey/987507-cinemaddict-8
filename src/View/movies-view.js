@@ -32,16 +32,59 @@ export default class MoviesView extends Component {
     this._onShowMore = this._onShowMore.bind(this);
   }
 
-  render() {
-    super.render();
+  get _showMoreButtonTemplate() {
+    return `<button class="films-list__show-more">Show more</button>`;
+  }
 
-    this._mainCardsContainer = this._element.querySelector(`.films-list__container--main`);
-    this._mostCommentedCardsContainer = this._element.querySelector(`.films-list__container--most-commented`);
-    this._topRatedCardsContainer = this._element.querySelector(`.films-list__container--top-rated`);
+  get template() {
+    return `<section class="films">
+      <section class="films-list">
+      <h2 class="films-list__title visually-hidden"></h2>
 
-    this._mainCardsContainerTitle = this._element.querySelector(`.films-list__title`);
+    <div class="films-list__container films-list__container--main">
+    </div>
 
-    return this._element;
+    </section>
+
+    <section class="films-list--extra">
+      <h2 class="films-list__title">Top rated</h2>
+
+    <div class="films-list__container films-list__container--top-rated">
+      </div>
+      </section>
+
+      <section class="films-list--extra">
+      <h2 class="films-list__title">Most commented</h2>
+
+    <div class="films-list__container films-list__container--most-commented">
+      </div>
+      </section>
+      </section>`;
+  }
+
+  set movies(movies) {
+    this._movies = movies;
+
+    if (this._isNotFirstRender) {
+      this._unrenderPrevious();
+    }
+    if (!this._isNotFirstRender) {
+      this._isNotFirstRender = true;
+    }
+
+    if (this._openedDetails) {
+      const newData = this._movies.all.find((movie) => movie.id === this._openedDetails.id);
+      this._openedDetails.update(newData);
+
+    }
+
+    this._processRenderingMainMovies();
+    this._renderMovies(this._movies.mostCommented, this._mostCommentedCardsContainer, false, `mostCommented`);
+    this._renderMovies(this._movies.topRated, this._topRatedCardsContainer, false, `topRated`);
+  }
+
+  set onMovieUpdate(fn) {
+    this._onMovieUpdate = fn;
   }
 
   _filterMoviesByTitleString(str) {
@@ -88,31 +131,6 @@ export default class MoviesView extends Component {
 
   }
 
-  set movies(movies) {
-    this._movies = movies;
-
-    if (this._isNotFirstRender) {
-      this._unrenderPrevious();
-    }
-    if (!this._isNotFirstRender) {
-      this._isNotFirstRender = true;
-    }
-
-    if (this._openedDetails) {
-      const newData = this._movies.all.find((movie) => movie.id === this._openedDetails.id);
-      this._openedDetails.update(newData);
-
-    }
-
-    this._processRenderingMainMovies();
-    this._renderMovies(this._movies.mostCommented, this._mostCommentedCardsContainer, false, `mostCommented`);
-    this._renderMovies(this._movies.topRated, this._topRatedCardsContainer, false, `topRated`);
-  }
-
-  set onMovieUpdate(fn) {
-    this._onMovieUpdate = fn;
-  }
-
   _renderMovies(movies, container, controls = true, category) {
     const mainBody = document.querySelector(`body`);
 
@@ -148,28 +166,6 @@ export default class MoviesView extends Component {
     });
   }
 
-  rerenderFilteredMovies(name) {
-    if (name === this._currentFilter) {
-      return;
-    }
-
-    this._currentFilter = name;
-    this._countOfMoviesToRender = RENDER_STEP;
-
-    for (const renderedMovie of this._renderedMovies.main) {
-      this._mainCardsContainer.removeChild(renderedMovie.element);
-      renderedMovie.component.unrender();
-    }
-
-    this._renderedMovies.main = [];
-
-    if (this._showMoreButton) {
-      this._showMoreButton.remove();
-    }
-
-    this._processRenderingMainMovies();
-  }
-
   _onShowMore(evt) {
     if (!evt.target.classList.contains(`films-list__show-more`)) {
       return;
@@ -194,12 +190,38 @@ export default class MoviesView extends Component {
     this._renderMovies(moviesToRender, this._mainCardsContainer, true, `main`);
   }
 
-  addListeners() {
-    this._element.addEventListener(`click`, this._onShowMore);
+  render() {
+    super.render();
+
+    this._mainCardsContainer = this._element.querySelector(`.films-list__container--main`);
+    this._mostCommentedCardsContainer = this._element.querySelector(`.films-list__container--most-commented`);
+    this._topRatedCardsContainer = this._element.querySelector(`.films-list__container--top-rated`);
+
+    this._mainCardsContainerTitle = this._element.querySelector(`.films-list__title`);
+
+    return this._element;
   }
 
-  removeListeners() {
-    this._element.removeEventListener(`click`, this._onShowMore);
+  rerenderFilteredMovies(name) {
+    if (name === this._currentFilter) {
+      return;
+    }
+
+    this._currentFilter = name;
+    this._countOfMoviesToRender = RENDER_STEP;
+
+    for (const renderedMovie of this._renderedMovies.main) {
+      this._mainCardsContainer.removeChild(renderedMovie.element);
+      renderedMovie.component.unrender();
+    }
+
+    this._renderedMovies.main = [];
+
+    if (this._showMoreButton) {
+      this._showMoreButton.remove();
+    }
+
+    this._processRenderingMainMovies();
   }
 
   showLoading() {
@@ -226,34 +248,12 @@ export default class MoviesView extends Component {
     this._element.classList.remove(`visually-hidden`);
   }
 
-  get _showMoreButtonTemplate() {
-    return `<button class="films-list__show-more">Show more</button>`;
+  addListeners() {
+    this._element.addEventListener(`click`, this._onShowMore);
   }
 
-  get template() {
-    return `<section class="films">
-      <section class="films-list">
-      <h2 class="films-list__title visually-hidden"></h2>
-
-    <div class="films-list__container films-list__container--main">
-    </div>
-
-    </section>
-
-    <section class="films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
-
-    <div class="films-list__container films-list__container--top-rated">
-      </div>
-      </section>
-
-      <section class="films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
-
-    <div class="films-list__container films-list__container--most-commented">
-      </div>
-      </section>
-      </section>`;
+  removeListeners() {
+    this._element.removeEventListener(`click`, this._onShowMore);
   }
 }
 

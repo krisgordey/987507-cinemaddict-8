@@ -26,14 +26,6 @@ export default class Movie extends Component {
     this._onToggleControlCase = this._onToggleControlCase.bind(this);
   }
 
-  _renderControls() {
-    return `<form class="film-card__controls">
-            <button data-type="watchlist" class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._watchlist ? `film-card__controls-item--active` : ``}" ><!--Add to watchlist--> WL</button>
-            <button data-type="watched" class="film-card__controls-item button film-card__controls-item--mark-as-watched ${this._watched ? `film-card__controls-item--active` : ``}"><!--Mark as watched-->WTCHD</button>
-            <button data-type="favorites" class="film-card__controls-item button film-card__controls-item--favorite ${this._favorites ? `film-card__controls-item--active` : ``}"><!--Mark as favorite-->FAV</button>
-            </form>`;
-  }
-
   get template() {
     return `<article class="film-card ${this._controls ? `` : `film-card--no-controls`}">
           <h3 class="film-card__title">${this._title}</h3>
@@ -49,6 +41,22 @@ export default class Movie extends Component {
 
           ${this._controls ? this._renderControls() : ``}
         </article>`;
+  }
+
+  set onOpen(fn) {
+    this._onOpen = fn;
+  }
+
+  set onMovieUpdate(fn) {
+    this._onMovieUpdate = fn;
+  }
+
+  _renderControls() {
+    return `<form class="film-card__controls">
+            <button data-type="watchlist" class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._watchlist ? `film-card__controls-item--active` : ``}" ><!--Add to watchlist--> WL</button>
+            <button data-type="watched" class="film-card__controls-item button film-card__controls-item--mark-as-watched ${this._watched ? `film-card__controls-item--active` : ``}"><!--Mark as watched-->WTCHD</button>
+            <button data-type="favorites" class="film-card__controls-item button film-card__controls-item--favorite ${this._favorites ? `film-card__controls-item--active` : ``}"><!--Mark as favorite-->FAV</button>
+            </form>`;
   }
 
   _onOpenCase(evt) {
@@ -89,14 +97,6 @@ export default class Movie extends Component {
     return undefined;
   }
 
-  set onOpen(fn) {
-    this._onOpen = fn;
-  }
-
-  set onMovieUpdate(fn) {
-    this._onMovieUpdate = fn;
-  }
-
   addListeners() {
     const openButton = this._element.querySelector(`.film-card__comments`);
     const controlsWrapper = this._element.querySelector(`.film-card__controls`);
@@ -122,5 +122,4 @@ export default class Movie extends Component {
       controlsWrapper.removeEventListener(`keydown`, this._onToggleControlCase);
     }
   }
-
 }

@@ -22,79 +22,8 @@ export default class StatisticView extends Component {
     this._onFilterCase = this._onFilterCase.bind(this);
   }
 
-  hideView() {
-    this.isHidden = true;
-    this._element.classList.add(`visually-hidden`);
-
-    this._myChart.destroy();
-  }
-
   get _statisticCtx() {
     return this._element.querySelector(`.statistic__chart`);
-  }
-
-  showView() {
-    this.isHidden = false;
-    this._element.classList.remove(`visually-hidden`);
-
-    this._statisticCtx.height = this._chartData.data.labels.length * this.BAR_HEIGHT;
-
-    this._myChart = new Chart(this._statisticCtx, this._chartData);
-  }
-
-  set movies(movies) {
-    this._movies = _.cloneDeep(movies);
-
-    this._update(this._movies.history);
-  }
-
-  _onFilterCase(evt) {
-    // Вариант с пересозданием и пересчётом высоты контейнера
-    this._myChart.destroy();
-
-    const filteredMovies = this._getFilteredMovies(evt.target.value, this._movies.history);
-    this._update(filteredMovies);
-
-    this._statisticCtx.height = this._chartData.data.labels.length * this.BAR_HEIGHT;
-    this._myChart = new Chart(this._statisticCtx, this._chartData);
-
-    // Вариант с обновлением, без подгонки по высоте
-    // const filteredMovies = this._getFilteredMovies(evt.target.value, this._movies.history);
-    // this._update(filteredMovies);
-    //
-    // this._myChart.data.labels = this._chartData.data.labels;
-    // this._myChart.data.datasets.data = this._chartData.data.datasets.data;
-    // this._myChart.update();
-  }
-
-  _update(movies) {
-    this._totalDuration = movies.reduce((acc, movie) => acc + movie.duration, 0);
-    this._totalWatched = movies.length;
-    const unsortedGenresMap = movies.reduce((acc, movie) => [...acc, ...movie.genre], [])
-      .reduce((acc, genre) => {
-        if (acc.get(genre)) {
-          acc.set(genre, acc.get(genre) + 1);
-        } else {
-          acc.set(genre, 1);
-        }
-        return acc;
-      }, new Map());
-
-    this._genres = [...unsortedGenresMap].sort((a, b) => b[1] - a[1]);
-    this._topGenre = this._genres[0][0];
-
-    this._element.querySelector(`.statistic__rank-label`).innerText = `Grand ${this._topGenre} Fan`;
-    this._element.querySelector(`.statistic__text-list`).innerHTML = this._statisticTextMarkup;
-  }
-
-  _getFilteredMovies(filter, movies) {
-    if (filter === `all-time`) {
-      return movies;
-    }
-    if (filter === `today`) {
-      filter = `day`;
-    }
-    return movies.filter((movie) => moment(movie.watchingDate).isSame(Date.now(), filter));
   }
 
   get _statisticTextMarkup() {
@@ -110,10 +39,6 @@ export default class StatisticView extends Component {
               <h4 class="statistic__item-title">Top genre</h4>
               <p class="statistic__item-text">${this._topGenre}</p>
             </li>`;
-  }
-
-  addListeners() {
-    this._element.addEventListener(`change`, this._onFilterCase);
   }
 
   get template() {
@@ -208,5 +133,80 @@ export default class StatisticView extends Component {
         }
       }
     };
+  }
+
+  set movies(movies) {
+    this._movies = _.cloneDeep(movies);
+
+    this._update(this._movies.history);
+  }
+
+  _onFilterCase(evt) {
+    // Вариант с пересозданием и пересчётом высоты контейнера
+    this._myChart.destroy();
+
+    const filteredMovies = this._getFilteredMovies(evt.target.value, this._movies.history);
+    this._update(filteredMovies);
+
+    this._statisticCtx.height = this._chartData.data.labels.length * this.BAR_HEIGHT;
+    this._myChart = new Chart(this._statisticCtx, this._chartData);
+
+    // Вариант с обновлением, без подгонки по высоте
+    // const filteredMovies = this._getFilteredMovies(evt.target.value, this._movies.history);
+    // this._update(filteredMovies);
+    //
+    // this._myChart.data.labels = this._chartData.data.labels;
+    // this._myChart.data.datasets.data = this._chartData.data.datasets.data;
+    // this._myChart.update();
+  }
+
+  _update(movies) {
+    this._totalDuration = movies.reduce((acc, movie) => acc + movie.duration, 0);
+    this._totalWatched = movies.length;
+    const unsortedGenresMap = movies.reduce((acc, movie) => [...acc, ...movie.genre], [])
+      .reduce((acc, genre) => {
+        if (acc.get(genre)) {
+          acc.set(genre, acc.get(genre) + 1);
+        } else {
+          acc.set(genre, 1);
+        }
+        return acc;
+      }, new Map());
+
+    this._genres = [...unsortedGenresMap].sort((a, b) => b[1] - a[1]);
+    this._topGenre = this._genres[0][0];
+
+    this._element.querySelector(`.statistic__rank-label`).innerText = `Grand ${this._topGenre} Fan`;
+    this._element.querySelector(`.statistic__text-list`).innerHTML = this._statisticTextMarkup;
+  }
+
+  _getFilteredMovies(filter, movies) {
+    if (filter === `all-time`) {
+      return movies;
+    }
+    if (filter === `today`) {
+      filter = `day`;
+    }
+    return movies.filter((movie) => moment(movie.watchingDate).isSame(Date.now(), filter));
+  }
+
+  hideView() {
+    this.isHidden = true;
+    this._element.classList.add(`visually-hidden`);
+
+    this._myChart.destroy();
+  }
+
+  showView() {
+    this.isHidden = false;
+    this._element.classList.remove(`visually-hidden`);
+
+    this._statisticCtx.height = this._chartData.data.labels.length * this.BAR_HEIGHT;
+
+    this._myChart = new Chart(this._statisticCtx, this._chartData);
+  }
+
+  addListeners() {
+    this._element.addEventListener(`change`, this._onFilterCase);
   }
 }

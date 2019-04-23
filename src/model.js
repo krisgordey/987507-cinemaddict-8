@@ -1,5 +1,3 @@
-
-
 export default class Model {
   constructor() {
     this._unsortedMovies = [];
@@ -11,6 +9,15 @@ export default class Model {
       mostCommented: [],
       topRated: []
     };
+  }
+
+  set movies(movies) {
+    this._unsortedMovies = movies;
+    this._sortByGroups(this._unsortedMovies);
+  }
+
+  get movies() {
+    return this._movies;
   }
 
   _sortByGroups(movies) {
@@ -30,15 +37,6 @@ export default class Model {
 
     this._movies.mostCommented = [...movies].sort((a, b) => b.comments.length - a.comments.length).slice(0, 2);
     this._movies.topRated = [...movies].sort((a, b) => b.totalRating - a.totalRating).slice(0, 2);
-  }
-
-  set movies(movies) {
-    this._unsortedMovies = movies;
-    this._sortByGroups(this._unsortedMovies);
-  }
-
-  get movies() {
-    return this._movies;
   }
 
   updateMovie(newData) {
